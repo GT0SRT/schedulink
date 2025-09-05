@@ -1,8 +1,9 @@
 import React from 'react'
 
 const Dashboard = () => {
+  const dark=false;
   return (
-    <div className='overflow-x-hidden'>
+    <div className={`${dark ? 'bg-black text-white':''} overflow-x-hidden h-screen`}>
       dashboard
     </div>
   )

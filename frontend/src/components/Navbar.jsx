@@ -4,13 +4,14 @@ import { RiMenu2Fill } from "react-icons/ri";
 import { FiBell, FiSun, FiMoon } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Sidebar from "./sidebar";
+import themeStore from "../store/themeStore";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const sidebarRef = useRef(null);
   const profileRef = useRef(null);
+  const [dark, setDarkMode] = useState(themeStore((state) => state.dark));
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
@@ -18,12 +19,6 @@ export default function Navbar() {
 
   const toggleTheme = () => {
     setDarkMode((prev) => !prev);
-    // You can also apply a class to <html> or <body> here to switch theme globally
-    if (!darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
   };
 
   // Close sidebar when clicking outside
@@ -56,7 +51,7 @@ export default function Navbar() {
   }, [menuOpen, profileOpen]);
 
   return (
-    <div className="h-18 bg-white flex items-center justify-between px-6 shadow-md">
+    <div className={`h-18 ${dark ? '':'bg-white'} flex items-center justify-between px-6 shadow-md`}>
       {/* Hamburger menu visible only on mobile */}
       <RiMenu2Fill
         onClick={toggleMenu}
@@ -81,7 +76,7 @@ export default function Navbar() {
           onClick={toggleTheme}
           className="p-2 rounded-full hover:bg-gray-200 transition"
         >
-          {darkMode ? (
+          {dark ? (
             <FiSun size={22} className="text-yellow-400" />
           ) : (
             <FiMoon size={22} className="text-[#2C3E86]" />
@@ -93,7 +88,7 @@ export default function Navbar() {
           <img
             src="https://img.freepik.com/premium-vector/back-school-cartoon-boy-student-showing-fingers-up_46527-623.jpg"
             alt="Profile"
-            className="w-12 h-12 opacity-80 rounded-full border-2 cursor-pointer border-[#2C3E86]"
+            className="w-12 h-12 m-1 opacity-80 rounded-full border-2 cursor-pointer border-[#2C3E86]"
           />
         </div>
       </div>

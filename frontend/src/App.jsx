@@ -7,13 +7,15 @@ import Attendance from './pages/Attendance';
 import { Feedback } from './pages/Feedback';
 import Tasks from './pages/Tasks';
 import Profile from './pages/Profile';
+import { ToastContainer } from 'react-toastify';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
     <>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<><Layout /></>}>
           <Route index element={<DashboardPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="schedule" element={<Schedule />} />
