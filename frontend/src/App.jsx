@@ -12,6 +12,8 @@ import Tasks from './pages/Tasks';
 import Profile from './pages/Profile';
 import { ToastContainer } from 'react-toastify';
 import PrivateRoute from './components/PrivateRoute';
+import Signin from './pages/Signin';
+import Signup from './pages/Signup';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
           <Route path="Tasks" element={<Tasks />} />
           <Route path="profile" element={<Profile />} />
         </Route>
+        <Route path="signin" element={<Signin />} />
+        <Route path="signup" element={<Signup />} />
       </Routes>
     </>
   )
