@@ -3,7 +3,7 @@ import Greetcard from '../components/Greetcard';
 import CurrentClass from '../components/CurrentClass';
 import StatCard from '../components/StatCard';
 import ScheduleList from '../components/ScheduleList';
-import Calendar from '../components/Calendar';
+import MyCalendar from '../components/MyCalendar';
 
 import { BsFileBarGraphFill, BsCalendar2DateFill } from "react-icons/bs";
 import { SiGoogletasks } from "react-icons/si";
@@ -66,7 +66,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
           const icons = [
             <BsFileBarGraphFill />,
@@ -88,11 +88,11 @@ const Dashboard = () => {
 
       {/* Schedule List + Calendar */}
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-2/3">
-          <ScheduleList />
+        <div className="w-full md:w-[760px]">
+        <MyCalendar />  
         </div>
-        <div className="w-full md:w-1/3">
-          <Calendar />
+        <div className="w-full md:w-[400px]">
+          <ScheduleList />
         </div>
       </div>
     </div>
