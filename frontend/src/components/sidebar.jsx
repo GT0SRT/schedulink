@@ -68,9 +68,11 @@ export default function Sidebar() {
         <div className="flex-1" />
 
         {/* Logout button */}
-        <button className="flex items-center justify-center pb-5 mr-16 gap-2 text-sm">
+        <Link
+          to="/signin"
+          className="flex items-center justify-center pb-5 mr-16 gap-2 text-sm hover:text-gray-300">
           <FiLogOut size={18} /> Log Out
-        </button>
+        </Link>
       </div>
     </div>
   );

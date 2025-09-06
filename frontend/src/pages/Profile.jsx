@@ -131,7 +131,7 @@ const Profile = () => {
           {/* Skills */}
           <div className="bg-white shadow p-6 rounded-2xl border-1 border-gray-300">
             <h3 className="font-semibold mb-4">Skills & Competencies</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-15 gap-y-6">
               {student.skills.map((skill, idx) => (
                 <div key={idx}>
                   <div className="flex justify-between text-sm font-medium">
