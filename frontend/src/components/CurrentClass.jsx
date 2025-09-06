@@ -2,12 +2,12 @@ import React from "react";
 
 const CurrentClass = ({ subject, time, location, teacher, progress, remaining }) => {
   return (
-    <div className="bg-[#2c3e86] text-white rounded-2xl p-6 shadow-lg">
-      <h2 className="text-lg font-medium mb-2">Current Class</h2>
-      <h3 className="text-2xl font-bold">{subject}</h3>
-      <p className="text-sm mb-2">{time}</p>
+    <div className="bg-[#2c3e86] text-white rounded-2xl md:mt-5 p-6 md:p-4 shadow-lg">
+      <h2 className="text-sm mb-1">Current Class</h2>
+      <h3 className="text-xl font-bold">{subject}</h3>
+      <p className="text-xs mb-1">{time}</p>
 
-      <div className="flex items-center gap-4 text-sm mb-4">
+      <div className="flex items-center gap-4 text-xs mb-2">
         <span>📍 {location}</span>
         <span>👨‍🏫 {teacher}</span>
       </div>
@@ -20,9 +20,9 @@ const CurrentClass = ({ subject, time, location, teacher, progress, remaining })
         ></div>
       </div>
 
-      <p className="text-sm mb-4">{remaining} minutes remaining</p>
+      <p className="text-xs mb-2">{remaining} minutes remaining</p>
 
-      <button className="bg-white text-black rounded-lg py-2 px-4 font-semibold w-full">
+      <button className="bg-white text-black rounded-lg py-2 md:py-1 px-4 font-semibold w-full">
         Mark Attendance
       </button>
     </div>
