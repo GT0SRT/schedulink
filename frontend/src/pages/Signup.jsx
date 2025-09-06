@@ -10,6 +10,7 @@ export default function Signup() {
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [isAdmin, setIsAdmin] = useState(false); // false = Student, true = Teacher
 
   // Student fields
@@ -158,7 +159,7 @@ export default function Signup() {
             />
           </div>
         )}
-
+        
         {/* Submit */}
         <button
           type="button"

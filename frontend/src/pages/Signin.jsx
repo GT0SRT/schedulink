@@ -58,7 +58,6 @@ export default function Signin() {
           Sign In
         </button>
       </form>
-
       {/* Demo accounts */}
       <div className="mt-6 text-xs text-gray-500 text-center">
         <p className="font-semibold">Demo Accounts:</p>
