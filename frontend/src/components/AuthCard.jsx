@@ -16,7 +16,7 @@ export default function AuthCard({ title, children }) {
       </div>
 
       {/* Right form card */}
-      <div className="bg-white md:w-1/3 rounded-xl flex flex-col p-6 items-center justify-center">
+      <div className="bg-white min-w-[350px] max-w-[420px] w-full  rounded-xl flex flex-col p-6 items-center justify-center">
         <h1
           style={{ fontFamily: '"Leckerli One", cursive' }}
           className="font-extralight mb-6 text-2xl text-[#2C3E86]"

@@ -10,13 +10,24 @@ export default function Signup() {
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // false = Student, true = Teacher
+
+  // Student fields
+  const [college, setCollege] = useState("");
+  const [year, setYear] = useState("");
+  const [branch, setBranch] = useState("");
+  const [stream, setStream] = useState("");
+
+  // Teacher fields
+  const [department, setDepartment] = useState("");
+  const [specialization, setSpecialization] = useState("");
 
   return (
-    <AuthCard title="Schedulink - Sign Up">
-      <p className="p-3 text-lg text-[#2C3E86] font-semibold">Create your account</p>
+    <AuthCard title="Create Account">
+      <p className="p-3 text-md text-gray-600">Fill in your details</p>
+
       <form className="flex flex-col gap-4 w-full items-center">
-        {/* Name fields */}
+        {/* Full Name */}
         <div className="flex gap-3 w-3/4">
           <input
             type="text"
@@ -82,12 +93,78 @@ export default function Signup() {
           </button>
         </div>
 
+        {/* Conditional Forms */}
+        {!isAdmin ? (
+          // Student Info
+          <div className="w-3/4 p-3 rounded-lg bg-blue-50 mt-3">
+            <h3 className="text-blue-700 font-semibold mb-2">Student Information</h3>
+            <input
+              type="text"
+              placeholder="College"
+              value={college}
+              onChange={(e) => setCollege(e.target.value)}
+              className="border p-2 mb-2 w-full rounded-md"
+            />
+            <select
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="border p-2 mb-2 w-full rounded-md"
+            >
+              <option value="">Select Year</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+            <select
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+              className="border p-2 mb-2 w-full rounded-md"
+            >
+              <option value="">Select Branch</option>
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="ME">ME</option>
+              <option value="EE">EE</option>
+            </select>
+            <select
+              value={stream}
+              onChange={(e) => setStream(e.target.value)}
+              className="border p-2 w-full rounded-md"
+            >
+              <option value="">Select Stream</option>
+              <option value="Regular">Regular</option>
+              <option value="Honors">Honors</option>
+              <option value="Lateral">Lateral</option>
+            </select>
+          </div>
+        ) : (
+          // Teacher Info
+          <div className="w-3/4 p-3 rounded-lg bg-green-50 mt-3">
+            <h3 className="text-green-700 font-semibold mb-2">Teacher Information</h3>
+            <input
+              type="text"
+              placeholder="Department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              className="border p-2 mb-2 w-full rounded-md"
+            />
+            <input
+              type="text"
+              placeholder="Specialization"
+              value={specialization}
+              onChange={(e) => setSpecialization(e.target.value)}
+              className="border p-2 w-full rounded-md"
+            />
+          </div>
+        )}
+
         {/* Submit */}
         <button
           type="button"
           className="w-3/4 mt-4 py-2 rounded-xl bg-[#3D57BB] text-white hover:bg-[#2C3E86] transition"
         >
-          Sign Up as {isAdmin ? "Teacher" : "Student"}
+          Create Account
         </button>
       </form>
 
