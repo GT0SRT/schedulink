@@ -15,7 +15,7 @@ const Profile = () => {
   const student = {
     name: "Grace Stanley",
     email: "student@university.edu",
-    avatar: "https://via.placeholder.com/100",
+    avatar: "https://img.freepik.com/premium-vector/back-school-cartoon-boy-student-showing-fingers-up_46527-623.jpg",
     college: "Tech University",
     year: "3rd Year",
     branch: "Computer Science",
@@ -67,19 +67,19 @@ const Profile = () => {
   }
 
   return (
-    <div className="overflow-x-hidden p-6 space-y-6">
+    <div className="overflow-x-hidden p-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center p-1">
         <h1 className="text-2xl font-bold">My Profile</h1>
         <button className="bg-black text-white px-4 py-2 rounded-lg">Edit Profile</button>
       </div>
-      <p className="text-gray-500">Manage your academic profile and track your progress</p>
+      <p className="text-gray-500 mb-6 mt-2 p-1">Manage your academic profile and track your progress</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Section */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Info */}
-          <div className="bg-white shadow p-6 rounded-2xl">
+          <div className="bg-white shadow border-1 border-gray-300 p-6 rounded-2xl">
             <div className="flex items-center space-x-4">
               <img src={student.avatar} alt="Profile" className="w-20 h-20 rounded-full" />
               <div>
@@ -91,27 +91,27 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 mt-6 gap-6 ">
+            <div className="grid md:grid-cols-2 mt-6 gap-6">
               {/* Academic Details */}
               <div className='space-y-2'>
                 <h3 className="font-semibold flex items-center">
                   <GraduationCap className="w-4 h-4 mr-2" /> Academic Details
                 </h3>
-                <div className="flex justify-between">
-                  <span>College:</span>
-                  <span>{student.college}</span>
+                <div className="flex justify-between mt-3">
+                  <span className='text-sm'>College:</span>
+                  <span className='text-sm text-gray-500'>{student.college}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Year:</span>
-                  <span>{student.year}</span>
+                  <span className='text-sm'>Year:</span>
+                  <span className='text-sm text-gray-500'>{student.year}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Branch:</span>
-                  <span>{student.branch}</span>
+                  <span className='text-sm'>Branch:</span>
+                  <span className='text-sm text-gray-500'>{student.branch}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Stream:</span>
-                  <span>{student.stream}</span>
+                  <span className='text-sm'>Stream:</span>
+                  <span className='text-sm text-gray-500'>{student.stream}</span>
                 </div>
               
               </div>
@@ -121,22 +121,22 @@ const Profile = () => {
                 <h3 className="font-semibold flex items-center">
                   <Target className="w-4 h-4 mr-2" /> Interests & Goals
                 </h3>
-                <p><div className="font-medium">Interests:</div> {student.interests.join(", ")}</p>
-                <p><div className="font-medium">Goals:</div> {student.goals.join(", ")}</p>
-                <p><div className="font-medium">Bio:</div> {student.bio}</p>
+                <p className='text-sm text-gray-500 mt-3'><div className="font-medium text-black">Interests:</div> {student.interests.join(", ")}</p>
+                <p className='text-sm text-gray-500'><div className="font-medium text-black">Goals:</div> {student.goals.join(", ")}</p>
+                <p className='text-sm text-gray-500'><div className="font-medium text-black">Bio:</div> {student.bio}</p>
               </div>
             </div>
           </div>
 
           {/* Skills */}
-          <div className="bg-white shadow p-6 rounded-2xl">
+          <div className="bg-white shadow p-6 rounded-2xl border-1 border-gray-300">
             <h3 className="font-semibold mb-4">Skills & Competencies</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {student.skills.map((skill, idx) => (
                 <div key={idx}>
                   <div className="flex justify-between text-sm font-medium">
                     <span>{skill.name}</span>
-                    <span>{skill.value}%</span>
+                    <span className='text-gray-500'>{skill.value}%</span>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-lg mt-1">
                     <div
@@ -153,7 +153,7 @@ const Profile = () => {
         {/* Right Section */}
         <div className="space-y-6">
           {/* Academic Progress */}
-          <div className="bg-white shadow p-6 rounded-2xl">
+          <div className="bg-white shadow p-6 rounded-2xl border-1 border-gray-300">
             <h3 className="font-semibold mb-4 flex items-center">
               <Calendar className="w-5 h-5 mr-2 text-gray-700" />
               <span>Academic Progress</span>
@@ -179,15 +179,15 @@ const Profile = () => {
                 ></div>
               </div> */}
               <div className="text-sm flex justify-between">
-                <span>Current Semester:</span>
+                <span className='text-gray-500'>Current Semester:</span>
                 <span>{student.currentSemester}</span>
               </div>
               <div className="text-sm flex justify-between">
-                <span>CGPA:</span>
+                <span className='text-gray-500'>CGPA:</span>
                 <span className="text-green-600">{student.cgpa}</span>
               </div>
               <div className="text-sm flex justify-between">
-                <span>Credits:</span>
+                <span className='text-gray-500'>Credits:</span>
                 <span>{student.credits}</span>
               </div>
             
@@ -195,16 +195,16 @@ const Profile = () => {
           </div>
 
           {/* Achievements */}
-          <div className="bg-white shadow p-6 rounded-2xl">
+          <div className="bg-white shadow p-6 rounded-2xl border-1 border-gray-300">
             <h3 className="font-semibold mb-4">Achievements</h3>
             <div className="space-y-4">
               {student.achievements.map((ach, idx) => (
-                <div key={idx} className="flex items-center space-x-3">
-                  <Award className={`w-5 h-5 ${ach.color}`} />
+                <div key={idx} className="flex items-center space-x-3 rounded-xl p-2 border-1 border-gray-300">
+                  <Award className={`w-10 h-10 ${ach.color}`} />
                   <div>
                     <p className="font-medium">{ach.title}</p>
-                    <p className="text-sm text-gray-600">{ach.desc}</p>
-                    <p className="text-xs text-gray-400">{ach.date}</p>
+                    <p className="text-xs text-gray-500">{ach.desc}</p>
+                    <p className="text-xs bg-gray-200 font-semibold p-1 w-fit rounded-2xl pl-2 pr-2 mt-1">{ach.date}</p>
                   </div>
                 </div>
               ))}
