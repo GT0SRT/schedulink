@@ -5,7 +5,10 @@ import DashboardPage from './pages/Dashboard'
 import Schedule from './pages/Schedule';
 import Attendance from './pages/Attendance';
 import { Feedback } from './pages/Feedback';
+// import Tasks from './pages/Tasks';
 import Tasks from './pages/Tasks';
+
+
 import Profile from './pages/Profile';
 import { ToastContainer } from 'react-toastify';
 import PrivateRoute from './components/PrivateRoute';
