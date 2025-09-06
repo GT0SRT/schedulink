@@ -71,7 +71,7 @@ const Profile = () => {
       {/* Header */}
       <div className="flex justify-between items-center p-1">
         <h1 className="text-2xl font-bold">My Profile</h1>
-        <button className="bg-black text-white px-4 py-2 rounded-lg">Edit Profile</button>
+        <button className="bg-[#3D57bb] text-white px-4 py-2 rounded-lg">Edit Profile</button>
       </div>
       <p className="text-gray-500 mb-6 mt-2 p-1">Manage your academic profile and track your progress</p>
 
@@ -140,7 +140,7 @@ const Profile = () => {
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-lg mt-1">
                     <div
-                      className="bg-black h-2 rounded-lg"
+                      className="bg-[#3D57bb] h-2 rounded-lg"
                       style={{ width: `${skill.value}%` }}
                     ></div>
                   </div>
@@ -164,7 +164,7 @@ const Profile = () => {
               <div className="flex items-center justify-between">
                 <div className="w-full bg-gray-200 h-2 rounded-lg mr-3 relative">
                   <div
-                    className="bg-black h-2 rounded-lg"
+                    className="bg-[#3D57bb] h-2 rounded-lg"
                     style={{ width: `${student.semesterProgress}%` }}
                   ></div>
                 </div>
