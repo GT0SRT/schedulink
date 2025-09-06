@@ -62,6 +62,10 @@ const Dashboard = () => {
         subtext="Upcoming" 
         icon={<BsCalendar2DateFill />}
       />
+  const dark=false;
+  return (
+    <div className={`${dark ? 'bg-black text-white':''} overflow-x-hidden h-screen`}>
+      dashboard
     </div>
       </div>
 
