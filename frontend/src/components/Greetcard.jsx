@@ -9,7 +9,7 @@ function Greetcard({ username }) {
         <h4 className='text-xl md:text-3xl font-bold text-gray-800 m-6 mb-1'>
           Welcome {username}!
         </h4>
-        <p className='text-gray-500 text-sm text-base m-6 mt-2'>
+        <p className='text-gray-500 text-sm m-6 mt-2'>
           Good to see you today! Let’s make it productive.
         </p>
       </div>

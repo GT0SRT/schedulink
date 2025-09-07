@@ -121,9 +121,9 @@ const Profile = () => {
                 <h3 className="font-semibold flex items-center">
                   <Target className="w-4 h-4 mr-2" /> Interests & Goals
                 </h3>
-                <p className='text-sm text-gray-500 mt-3'><div className="font-medium text-black">Interests:</div> {student.interests.join(", ")}</p>
-                <p className='text-sm text-gray-500'><div className="font-medium text-black">Goals:</div> {student.goals.join(", ")}</p>
-                <p className='text-sm text-gray-500'><div className="font-medium text-black">Bio:</div> {student.bio}</p>
+                <div className='text-sm text-gray-500 mt-3'><div className="font-medium text-black">Interests:</div> {student.interests.join(", ")}</div>
+                <div className='text-sm text-gray-500'><div className="font-medium text-black">Goals:</div> {student.goals.join(", ")}</div>
+                <div className='text-sm text-gray-500'><div className="font-medium text-black">Bio:</div> {student.bio}</div>
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ const Profile = () => {
 
           {/* Achievements */}
           <div className="bg-white shadow p-6 rounded-2xl border-1 border-gray-300">
-            <h3 className="font-semibold mb-4">Achievements</h3>
+            <h3 className="font-semibold mb-4">Achievements & Awards</h3>
             <div className="space-y-4">
               {student.achievements.map((ach, idx) => (
                 <div key={idx} className="flex items-center space-x-3 rounded-xl p-2 border-1 border-gray-300">

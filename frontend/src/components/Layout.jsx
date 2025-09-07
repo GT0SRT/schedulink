@@ -8,7 +8,7 @@ export default function Layout() {
       {typeof window !== "undefined" && window.innerWidth <= 767 ? null : <Sidebar />}
       <div className="flex-1 flex flex-col overflow-y-auto">
         <Navbar />
-        <div className="">
+        <div className=" ">
           <Outlet />
         </div>
       </div>

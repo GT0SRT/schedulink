@@ -88,11 +88,10 @@ const MyCalendar = () => {
 
   return (
     <div
-      className=" rounded-xl p-2 border border-gray-200 shadow-xl"
-      style={{ height: 380 }}
+      className=" rounded-xl p-2 border border-gray-200 shadow-xl"      
     >
       <h2 className="text-base font-semibold text-center p-2">My Calendar</h2>
-      <div className="w-full h-[55vh] sm:h-[60vh] md:h-[350px] lg:h-[350px]">
+      <div className="w-full h-[75vh] sm:h-[60vh] md:h-[350px] lg:h-[350px]">
         <Calendar
           localizer={localizer}
           events={events}

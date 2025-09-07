@@ -1,9 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiHome, FiBookOpen, FiCalendar, FiFileText, FiMessageSquare, FiClipboard,
-  FiLogOut,} from "react-icons/fi";
-import { FaRegUser } from "react-icons/fa";
+  FiLogOut, FiBarChart2, FiHelpCircle, FiSettings,} from "react-icons/fi";
+import { FaChalkboardTeacher, FaRegUser, FaUserGraduate } from "react-icons/fa";
+import { CiCircleAlert } from "react-icons/ci";
+import useUserStore from "../store/userStore";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 
-const menuItems = [
+const studentMenu = [
   { name: "Dashboard", icon: <FiBookOpen size={20} />, path: "/dashboard" },
   { name: "Schedule", icon: <FiCalendar size={20} />, path: "/schedule" },
   { name: "Attendance", icon: <FiFileText size={20} />, path: "/attendance" },
@@ -12,9 +17,62 @@ const menuItems = [
   { name: "Profile", icon: <FaRegUser size={20} />, path: "/profile" },
 ];
 
+const teacherMenu = [
+  { name: "Dashboard", icon: <FiBookOpen size={20} />, path: "/dashboard" },
+  { name: "My Classes", icon: <FiCalendar size={20} />, path: "/MyClasses" },
+  { name: "Report Absence", icon: <CiCircleAlert size={20} />, path: "/reportabsence" },
+  { name: "Feedback", icon: <FiMessageSquare size={20} />, path: "/feedback" },
+  { name: "Profile", icon: <FaRegUser size={20} />, path: "/profile" },
+];
+
+const adminMenu = [
+  { name: "Overview", icon: <FiBarChart2 size={20} />, path: "/overview" },
+  { name: "Manage Schedules", icon: <FiCalendar size={20} />, path: "/schedules" },
+  { name: "Manage Teachers", icon: <FaChalkboardTeacher size={20} />, path: "/teachers" },
+  { name: "Manage Students", icon: <FaUserGraduate size={20} />, path: "/students" },
+  { name: "Reports", icon: <HiOutlineDocumentReport size={20} />, path: "/reports" },
+  { name: "Help", icon: <FiHelpCircle size={20} />, path: "/help" },
+  { name: "Settings", icon: <FiSettings size={20} />, path: "/settings" },
+];
+
 export default function Sidebar() {
   const location = useLocation();
   const currentPath = location.pathname.toLowerCase();
+  const user = useUserStore(state => state.user);
+  const [menuItems, setMenuItems] = useState([]);
+  const logout = useUserStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Logged out successfully!');
+      navigate('/signin');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) {
+      setMenuItems([]);
+      return;
+    }
+
+    switch (user.role) {
+      case "s":
+        setMenuItems(studentMenu);
+        break;
+      case "t":
+        setMenuItems(teacherMenu);
+        break;
+      case "a":
+        setMenuItems(adminMenu);
+        break;
+      default:
+        setMenuItems([]);
+    }
+  }, [user]);
 
   // Find active item by matching current path to menu item path
   const activeItem = menuItems.find((item) =>
@@ -68,11 +126,11 @@ export default function Sidebar() {
         <div className="flex-1" />
 
         {/* Logout button */}
-        <Link
-          to="/signin"
+        <button
+          onClick={handleLogout}
           className="flex items-center justify-center pb-5 mr-16 gap-2 text-sm hover:text-gray-300">
           <FiLogOut size={18} /> Log Out
-        </Link>
+        </button>
       </div>
     </div>
   );

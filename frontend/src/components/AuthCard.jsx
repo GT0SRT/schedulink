@@ -19,7 +19,7 @@ export default function AuthCard({ title, children }) {
       <div className="bg-white min-w-[350px] max-w-[420px] w-full  rounded-xl flex flex-col p-6 items-center justify-center">
         <h1
           style={{ fontFamily: '"Leckerli One", cursive' }}
-          className="font-extralight mb-6 text-2xl text-[#2C3E86]"
+          className="font-extralight mb-0 text-2xl text-[#2C3E86]"
         >
           {title}
         </h1>

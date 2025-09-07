@@ -8,11 +8,13 @@ import MyCalendar from '../components/MyCalendar';
 import { BsFileBarGraphFill, BsCalendar2DateFill } from "react-icons/bs";
 import { SiGoogletasks } from "react-icons/si";
 import { VscFeedback } from "react-icons/vsc";
+import useUserStore from '../store/userStore';
 
 const Dashboard = () => {
   const [stats, setStats] = useState([]);
   const [currentClass, setCurrentClass] = useState(null);
   const [username, setUsername] = useState("User");
+  const user = useUserStore(state => state.user);
 
   useEffect(() => {
     // Simulated API data
@@ -42,7 +44,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="overflow-x-hidden p-4 space-y-6 m-2">
+    <div className="overflow-x-hidden overflow-y-hidden p-4 space-y-6 m-2">
 
       {/* Top Section: Greetcard + CurrentClass */}
       <div className="flex flex-col md:flex-row gap-4">

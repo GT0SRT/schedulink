@@ -1,27 +1,46 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import AuthCard from "../components/AuthCard";
 import { FaRegCircle, FaRegDotCircle } from "react-icons/fa";
-import { GiTeacher } from "react-icons/gi";
-import { PiStudentBold } from "react-icons/pi";
+import axios from "axios";
+import useUserStore from "../store/userStore";
+const API_URL = import.meta.env.VITE_API_URL;
+import { toast } from 'react-toastify';
 
 export default function Signup() {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("s");
+  const [redirect,setRedirect] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(false); // false = Student, true = Teacher
+  const handleSignup = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/signup`,{
+          firstName: fname,
+          lastName: lname,
+          email,
+          password,
+          role,
+          theme: false,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-  // Student fields
-  const [college, setCollege] = useState("");
-  const [year, setYear] = useState("");
-  const [branch, setBranch] = useState("");
-  const [stream, setStream] = useState("");
+      useUserStore.getState().setUser(response.data);
+      setRedirect(true);
+      toast.success("Signup successfully!!")
+    } catch (error) {
+      console.error("Signup error:", error.response?.data || error.message);
+    }
+  };
 
-  // Teacher fields
-  const [department, setDepartment] = useState("");
-  const [specialization, setSpecialization] = useState("");
+  if (redirect) {
+    return <Navigate to={'/dashboard'} />
+  }
 
   return (
     <AuthCard title="Create Account">
@@ -70,32 +89,37 @@ export default function Signup() {
 
         {/* Role selection */}
         <div className="flex gap-4 w-3/4 mt-2">
-          <button
-            type="button"
-            onClick={() => setIsAdmin(false)}
-            className={`flex items-center justify-center gap-2 flex-1 border px-3 py-2 rounded-lg ${
-              !isAdmin ? "bg-[#3D57BB] text-white" : "border-gray-400 text-[#2C3E86]"
-            }`}
+          <div
+            onClick={() => setRole("s")}
+            className={`flex items-center justify-center gap-2 
+            flex-1 border-gray-400 text-[#2C3E86]`}
           >
-            {!isAdmin ? <FaRegDotCircle /> : <FaRegCircle />}
-            <PiStudentBold />
+            {role === "s" ? <FaRegDotCircle /> : <FaRegCircle />}
+            {/* <PiStudentBold /> */}
             Student
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsAdmin(true)}
-            className={`flex items-center justify-center gap-2 flex-1 border px-3 py-2 rounded-lg ${
-              isAdmin ? "bg-[#3D57BB] text-white" : "border-gray-400 text-[#2C3E86]"
-            }`}
+          </div>
+          <div
+            onClick={() => setRole("t")}
+            className={`flex items-center justify-center gap-2 
+            flex-1 border-gray-400 text-[#2C3E86]`}
           >
-            {isAdmin ? <FaRegDotCircle /> : <FaRegCircle />}
-            <GiTeacher />
+            {role === "t" ? <FaRegDotCircle /> : <FaRegCircle />}
+            {/* <GiTeacher /> */}
             Teacher
-          </button>
+          </div>
+          <div
+            onClick={() => setRole("a")}
+            className={`flex items-center justify-center gap-2 
+            flex-1 border-gray-400 text-[#2C3E86]`}
+          >
+            {role === "a" ? <FaRegDotCircle /> : <FaRegCircle />}
+            {/* <GiTeacher /> */}
+            Admin
+          </div>
         </div>
 
         {/* Conditional Forms */}
-        {!isAdmin ? (
+        {/* {!isAdmin ? (
           // Student Info
           <div className="w-3/4 p-3 rounded-lg bg-blue-50 mt-3">
             <h3 className="text-blue-700 font-semibold mb-2">Student Information</h3>
@@ -158,12 +182,13 @@ export default function Signup() {
               className="border p-2 w-full rounded-md"
             />
           </div>
-        )}
+        )} */}
         
         {/* Submit */}
         <button
           type="button"
-          className="w-3/4 mt-4 py-2 rounded-xl bg-[#3D57BB] text-white hover:bg-[#2C3E86] transition"
+          onClick={handleSignup}
+          className="w-3/4 mt-4 cursor-pointer py-2 rounded-xl bg-[#3D57BB] text-white hover:bg-[#2C3E86] transition"
         >
           Create Account
         </button>
