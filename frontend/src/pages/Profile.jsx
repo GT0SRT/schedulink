@@ -9,9 +9,12 @@
 // }
 import React from 'react'
 import { Mail, GraduationCap, Target, Award, Calendar } from 'lucide-react'
+import useUserStore from '../store/userStore'
 
 const Profile = () => {
   // Profile Data (variables for backend integration)
+  const user = useUserStore(state => state.user);
+  
   const student = {
     name: "Grace Stanley",
     email: "student@university.edu",
@@ -94,9 +97,13 @@ const Profile = () => {
             <div className="grid md:grid-cols-2 mt-6 gap-6">
               {/* Academic Details */}
               <div className='space-y-2'>
-                <h3 className="font-semibold flex items-center">
+                {
+                  user.role === "s" ? (<h3 className="font-semibold flex items-center">
                   <GraduationCap className="w-4 h-4 mr-2" /> Academic Details
-                </h3>
+                </h3>):(<h3 className="font-semibold flex items-center">
+                  <GraduationCap className="w-4 h-4 mr-2" /> professional Details
+                </h3>)
+                }
                 <div className="flex justify-between mt-3">
                   <span className='text-sm'>College:</span>
                   <span className='text-sm text-gray-500'>{student.college}</span>

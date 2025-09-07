@@ -5,7 +5,7 @@ import Layout from './components/Layout';
 import DashboardPage from './pages/Dashboard';
 import Schedule from './pages/Schedule';
 import Attendance from './pages/Attendance';
-import { Feedback } from './pages/Feedback';
+import Feedback from './pages/Feedback';
 import Tasks from './pages/Tasks';
 import Profile from './pages/Profile';
 import { ToastContainer } from 'react-toastify';
@@ -18,6 +18,7 @@ import { Teachers } from './pages/Teachers';
 import { Students } from './pages/Students';
 import { ManageSchedules } from './pages/ManageSchedules';
 import { ReportAbsence } from './pages/ReportAbsence';
+import { MyClasses } from './pages/MyClasses';
 
 function App() {
   const fetchUser = useUserStore((state) => state.fetchUser);
@@ -42,6 +43,7 @@ function App() {
           <Route path="schedules" element={<ManageSchedules />} />
           <Route path="teachers" element={<Teachers />} />
           <Route path="students" element={<Students />} />
+          <Route path="MyClasses" element={<MyClasses />} />
           {/* <Route path="reports" element={<Reports />} /> */}
           {/* <Route path="help" element={<Help />} /> */}
           {/* <Route path="settings" element={<Settings />} /> */}
