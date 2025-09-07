@@ -11,7 +11,7 @@ export default function ScheduleList() {
       <h3 className="font-semibold mb-3">Today’s Schedule</h3>
       <ul className="space-y-2">
         {events.map((e, i) => (
-          <li key={i} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+          <li key={i} className="flex justify-between text-sm p-4 bg-gray-50 rounded">
             <span>{e.startTime}</span> - <span>{e.endTime}</span>
             
             <span>{e.subject}</span>
