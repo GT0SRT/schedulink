@@ -18,7 +18,7 @@ import { Teachers } from './pages/Teachers';
 import { Students } from './pages/Students';
 import { ManageSchedules } from './pages/ManageSchedules';
 import { ReportAbsence } from './pages/ReportAbsence';
-import { MyClasses } from './pages/MyClasses';
+import  MyClasses  from './pages/MyClasses';
 
 function App() {
   const fetchUser = useUserStore((state) => state.fetchUser);

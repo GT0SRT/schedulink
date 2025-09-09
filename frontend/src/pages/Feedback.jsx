@@ -99,7 +99,7 @@ const DEFAULT_FEEDBACKS = [
   },
 ];
 
-  function Feedback() {
+function Feedback() {
   /* --- localStorage keys --- */
   const LS_PENDING = "pending_sessions";
   const LS_FEEDBACKS = "class_feedbacks";
@@ -142,16 +142,19 @@ const DEFAULT_FEEDBACKS = [
         : (
             feedbacks.reduce((s, f) => s + (f.understanding || 0), 0) / total
           ).toFixed(1);
-    const positiveCount = feedbacks.filter((f) => (f.usefulness || 0) >= 4)
-      .length;
-    const positivePct = total === 0 ? 0 : Math.round((positiveCount / total) * 100);
+    const positiveCount = feedbacks.filter(
+      (f) => (f.usefulness || 0) >= 4
+    ).length;
+    const positivePct =
+      total === 0 ? 0 : Math.round((positiveCount / total) * 100);
 
     // top subject
     const freq = {};
     feedbacks.forEach((f) => {
       freq[f.subject] = (freq[f.subject] || 0) + 1;
     });
-    let topSubject = Object.keys(freq).sort((a, b) => freq[b] - freq[a])[0] || "—";
+    let topSubject =
+      Object.keys(freq).sort((a, b) => freq[b] - freq[a])[0] || "—";
 
     return {
       total,
@@ -193,7 +196,9 @@ const DEFAULT_FEEDBACKS = [
 
     // mark session submitted (or remove it)
     setPending((prev) =>
-      prev.map((s) => (s.id === activeSession.id ? { ...s, status: "submitted" } : s))
+      prev.map((s) =>
+        s.id === activeSession.id ? { ...s, status: "submitted" } : s
+      )
     );
 
     setModalOpen(false);
@@ -204,7 +209,9 @@ const DEFAULT_FEEDBACKS = [
   };
 
   const reopenSession = (sessionId) => {
-    setPending((prev) => prev.map((s) => (s.id === sessionId ? { ...s, status: "pending" } : s)));
+    setPending((prev) =>
+      prev.map((s) => (s.id === sessionId ? { ...s, status: "pending" } : s))
+    );
   };
 
   const clearAllFeedbacks = () => {
@@ -256,7 +263,9 @@ const DEFAULT_FEEDBACKS = [
           <div className="text-sm text-gray-500">Avg Understanding</div>
           <div className="flex items-center justify-between mt-3">
             <div>
-              <div className="text-2xl font-bold">{metrics.avgUnderstanding}/5</div>
+              <div className="text-2xl font-bold">
+                {metrics.avgUnderstanding}/5
+              </div>
               <div className="text-xs text-gray-400">Your learning rating</div>
             </div>
             <div className="text-2xl" style={{ color: THEME_LIGHT }}>
@@ -308,31 +317,37 @@ const DEFAULT_FEEDBACKS = [
             style={{ borderColor: `${THEME_LIGHT}22` }}
           >
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-lg" style={{ color: THEME_DARK }}>
+              <h3
+                className="font-semibold text-lg"
+                style={{ color: THEME_DARK }}
+              >
                 Pending Feedback
               </h3>
               <div className="text-sm text-gray-500">
-                {pending.filter((p) => p.status === 'pending').length} pending
+                {pending.filter((p) => p.status === "pending").length} pending
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            {pending.filter((p) => p.status === 'pending').length === 0 && (
+            {pending.filter((p) => p.status === "pending").length === 0 && (
               <div className="text-gray-500 italic p-6 bg-[#3D57bb]/6 rounded-lg border border-[#3D57bb]/10">
                 No pending feedback — great job!
               </div>
             )}
 
             {pending
-              .filter((s) => s.status === 'pending')
+              .filter((s) => s.status === "pending")
               .map((s) => (
                 <div
                   key={s.id}
                   className="rounded-lg p-4 bg-[#3D57bb]/8 border border-[#3D57bb]/20 flex flex-col sm:flex-row sm:items-center gap-4 justify-between"
                 >
                   <div>
-                    <div className="text-lg font-semibold" style={{ color: THEME_DARK }}>
+                    <div
+                      className="text-lg font-semibold"
+                      style={{ color: THEME_DARK }}
+                    >
                       {s.subject}
                     </div>
                     <div className="text-sm text-gray-500">{s.instructor}</div>
@@ -362,7 +377,10 @@ const DEFAULT_FEEDBACKS = [
             style={{ borderColor: `${THEME_DARK}22` }}
           >
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-lg" style={{ color: THEME_DARK }}>
+              <h3
+                className="font-semibold text-lg"
+                style={{ color: THEME_DARK }}
+              >
                 Recent Feedback
               </h3>
               <input
@@ -375,23 +393,37 @@ const DEFAULT_FEEDBACKS = [
           </div>
 
           <div className="space-y-4">
-            {feedbacks.filter((f) => f.subject.toLowerCase().includes(nameFilter.toLowerCase())).length === 0 && (
+            {feedbacks.filter((f) =>
+              f.subject.toLowerCase().includes(nameFilter.toLowerCase())
+            ).length === 0 && (
               <div className="text-gray-500 italic p-6 bg-[#2C3E86]/6 rounded-lg border border-[#2C3E86]/10">
                 No feedbacks yet.
               </div>
             )}
 
             {feedbacks
-              .filter((f) => f.subject.toLowerCase().includes(nameFilter.toLowerCase()))
+              .filter((f) =>
+                f.subject.toLowerCase().includes(nameFilter.toLowerCase())
+              )
               .map((f) => (
-                <div key={f.id} className="rounded-lg p-4 bg-[#3D57bb]/6 border border-[#3D57bb]/14">
+                <div
+                  key={f.id}
+                  className="rounded-lg p-4 bg-[#3D57bb]/6 border border-[#3D57bb]/14"
+                >
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="font-semibold text-lg" style={{ color: THEME_DARK }}>
+                      <div
+                        className="font-semibold text-lg"
+                        style={{ color: THEME_DARK }}
+                      >
                         {f.subject}
                       </div>
-                      <div className="text-sm text-gray-500">{f.instructor}</div>
-                      <div className="text-xs text-gray-400 mt-1">{formatDate(f.dateISO)}</div>
+                      <div className="text-sm text-gray-500">
+                        {f.instructor}
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        {formatDate(f.dateISO)}
+                      </div>
                     </div>
 
                     <div className="flex gap-2 items-center">
@@ -439,7 +471,10 @@ const DEFAULT_FEEDBACKS = [
       {/* Modal */}
       {modalOpen && activeSession && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setModalOpen(false)}
+          />
           <div
             className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 border"
             style={{ borderColor: `${THEME_LIGHT}22` }}
@@ -453,21 +488,31 @@ const DEFAULT_FEEDBACKS = [
                   {activeSession.instructor} • {activeSession.time}
                 </div>
               </div>
-              <button onClick={() => setModalOpen(false)} className="text-gray-600 hover:text-gray-900">
+              <button
+                onClick={() => setModalOpen(false)}
+                className="text-gray-600 hover:text-gray-900"
+              >
                 ✕
               </button>
             </div>
 
             <form onSubmit={submitFeedback} className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-700">Understanding</label>
+                <label className="text-sm font-semibold text-gray-700">
+                  Understanding
+                </label>
                 <div className="mt-2">
-                  <StarRating value={understanding} onChange={setUnderstanding} />
+                  <StarRating
+                    value={understanding}
+                    onChange={setUnderstanding}
+                  />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-700">Pace</label>
+                <label className="text-sm font-semibold text-gray-700">
+                  Pace
+                </label>
                 <select
                   value={pace}
                   onChange={(e) => setPace(e.target.value)}
@@ -480,14 +525,18 @@ const DEFAULT_FEEDBACKS = [
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-700">Usefulness</label>
+                <label className="text-sm font-semibold text-gray-700">
+                  Usefulness
+                </label>
                 <div className="mt-2">
                   <StarRating value={usefulness} onChange={setUsefulness} />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-700">Comments (optional)</label>
+                <label className="text-sm font-semibold text-gray-700">
+                  Comments (optional)
+                </label>
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
@@ -498,7 +547,11 @@ const DEFAULT_FEEDBACKS = [
               </div>
 
               <div className="flex items-center gap-3 justify-end">
-                <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 border rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 border rounded-lg"
+                >
                   Cancel
                 </button>
                 <button
@@ -515,6 +568,6 @@ const DEFAULT_FEEDBACKS = [
       )}
     </div>
   );
-};
+}
 
 export default Feedback;
