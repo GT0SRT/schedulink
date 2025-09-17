@@ -275,9 +275,13 @@ export default function Attendance() {
               <span className="inline-block w-4 h-4 rounded-full border border-white/30" />
               Mark Attendance - Current Class
             </div>
-            <h2 className="text-2xl font-bold mt-3">{activeSubject.name}</h2>
+            {activeSubject ? (
+              <h2 className="text-2xl font-bold mt-3">{activeSubject.name}</h2>
+            ) : (
+              <h2 className="text-2xl font-bold mt-3 text-red-600">No subject selected</h2>
+            )}
             <div className="text-sm mt-1">
-              {activeSubject.room} • {activeSubject.instructor}
+              {activeSubject?.room} • {activeSubject?.instructor}
             </div>
             <div className="text-xs mt-2 opacity-90">
               {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} • {new Date().toLocaleDateString()}

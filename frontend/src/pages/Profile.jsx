@@ -10,10 +10,13 @@
 import React from 'react'
 import { Mail, GraduationCap, Target, Award, Calendar } from 'lucide-react'
 import useUserStore from '../store/userStore'
+import EditProfileForm from '../components/EditProfileForm'
+import { useState } from 'react'
 
 const Profile = () => {
   // Profile Data (variables for backend integration)
   const user = useUserStore(state => state.user);
+  const [isEditing, setIsEditing] = useState(false);
   
   const student = {
     name: "Grace Stanley",
@@ -74,7 +77,10 @@ const Profile = () => {
       {/* Header */}
       <div className="flex justify-between items-center p-1">
         <h1 className="text-2xl font-bold">My Profile</h1>
-        <button className="bg-[#3D57bb] text-white px-4 py-2 rounded-lg">Edit Profile</button>
+        <button 
+        onClick={() => setIsEditing(true)}
+        className="bg-[#3D57bb] text-white px-4 py-2 rounded-lg">
+          Edit Profile</button>
       </div>
       <p className="text-gray-500 mb-6 mt-2 p-1">Manage your academic profile and track your progress</p>
 
@@ -219,6 +225,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {isEditing && <EditProfileForm onClose={() => setIsEditing(false)} />}
     </div>
   )
 }
