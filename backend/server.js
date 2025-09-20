@@ -47,8 +47,8 @@ app.post('/signup', async (req, res) => {
     // Set HttpOnly cookie
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "Lax",
-      secure: false, // Set to true in production with HTTPS
+      sameSite: "None",
+      secure: true, // Set to true in production with HTTPS
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -79,7 +79,7 @@ app.post('/signin', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       sameSite: 'Lax',
-      secure: false, // true in production with HTTPS
+      secure: true, // true in production with HTTPS
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -108,8 +108,8 @@ app.get('/me', (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    sameSite: 'Lax',
-    secure: false, // Set true in production with HTTPS
+    sameSite: 'None',
+    secure: true,
   });
   res.status(200).json({ message: 'Logged out successfully' });
 });
