@@ -43,7 +43,6 @@ Not all features, models, or architectural plans are public at this time.
 
 For collaborations or queries, reach out via:
 
-📧  
 🔗 [LinkedIn](https://linkedin.com/in/)
 
 ---
