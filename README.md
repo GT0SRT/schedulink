@@ -1,4 +1,4 @@
-# Shedulink 📚
+# Schedulink 📚
 
 **Smart Academic Attendance & Scheduling App**  
 Aiming to help institutions automate attendance and optimize student productivity — aligned with modern educational needs.
@@ -7,7 +7,7 @@ Aiming to help institutions automate attendance and optimize student productivit
 
 ## 🌟 Overview
 
-Shedulink is a platform that supports:
+Schedulink is a platform that supports:
 
 - Efficient classroom attendance tracking
 - Smart student scheduling
