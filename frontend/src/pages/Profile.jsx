@@ -19,7 +19,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   
   const student = {
-    name: "Grace Stanley",
+    name: "Arun Parmar",
     email: "student@university.edu",
     avatar: "https://img.freepik.com/premium-vector/back-school-cartoon-boy-student-showing-fingers-up_46527-623.jpg",
     college: "Tech University",
