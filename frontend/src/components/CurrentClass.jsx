@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import QRScanner from "./QRScanner"; // your QR scanner component
+import img from '../assets/checkmark.gif';
 
 const CurrentClass = ({
   classId,
@@ -214,8 +215,13 @@ const CurrentClass = ({
           <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md relative">
             {attendanceMarked ? (
               <div className="text-center">
+                <img
+                  src={"https://i.pinimg.com/originals/87/e8/aa/87e8aad244d0eaf10ee53bef90d43b77.gif"}
+                  alt="sparkles"
+                  className=" top-[-20px] left-[-20px] p-7"
+                />
                 <h2 className="text-2xl font-semibold text-green-600 mb-4">
-                  ✅ Attendance Marked
+                  Attendance Marked Successfully
                 </h2>
                 <button
                   onClick={() => {
