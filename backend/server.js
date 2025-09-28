@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const app = express();
 const salt = bcrypt.genSaltSync(10);
+const qrRoutes = require('./routes/generateQR');
 
 app.use(cors({ origin: process.env.WEB_URI, credentials: true }));
 app.use(express.json());
@@ -113,6 +114,8 @@ app.post('/logout', (req, res) => {
   });
   res.status(200).json({ message: 'Logged out successfully' });
 });
+
+app.use('/api/generateQR', qrRoutes);
 
 // Server
 const port = process.env.PORT || 4000;

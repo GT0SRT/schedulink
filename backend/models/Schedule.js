@@ -1,11 +1,26 @@
-const mongoose = require("mongoose");
-const { Schema, model } = mongoose;
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const ScheduleSchema = new Schema({
-  courseOfferingId: { type: Schema.Types.ObjectId, ref: "CourseOffering", required: true },
-  day: { type: String, enum: ["mon", "tue", "wed", "thu", "fri", "sat"], required: true },
-  startTime: { type: String, required: true },
-  endTime: { type: String, required: true },
+const TimeSlotSchema = new Schema({
+  subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+  teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  startTime: { type: String, required: true }, // e.g. "09:00"
+  endTime: { type: String, required: true }    // e.g. "10:00"
+}, { _id: false });
+
+const WeeklyScheduleSchema = new Schema({
+  session: {
+    type: Schema.Types.ObjectId,
+    ref: 'AcademicSession',
+    required: true,
+    unique: true // Ensure one schedule per session
+  },
+  mon: [TimeSlotSchema],
+  tue: [TimeSlotSchema],
+  wed: [TimeSlotSchema],
+  thu: [TimeSlotSchema],
+  fri: [TimeSlotSchema],
+  sat: [TimeSlotSchema]
 }, { timestamps: true });
 
-module.exports = model("Schedule", ScheduleSchema);
+module.exports = mongoose.model('WeeklySchedule', WeeklyScheduleSchema);

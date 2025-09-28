@@ -20,6 +20,7 @@ import { ManageSchedules } from './pages/ManageSchedules';
 import { ReportAbsence } from './pages/ReportAbsence';
 import  MyClasses  from './pages/MyClasses';
 import Test from './pages/Test';
+import QRScanner from './components/QRScanner';
 
 function App() {
   const fetchUser = useUserStore((state) => state.fetchUser);
@@ -47,10 +48,11 @@ function App() {
           <Route path="MyClasses" element={<MyClasses />} />
           {/* <Route path="reports" element={<Reports />} /> */}
           {/* <Route path="help" element={<Help />} /> */}
-          <Route path="test" element={<Test />} />
+          {/* <Route path="test" element={<Test />} /> */}
         </Route>
         <Route path="signin" element={<Signin />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="test" element={<QRScanner />} />
       </Routes>
     </>
   );

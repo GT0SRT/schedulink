@@ -2,12 +2,18 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const ClassSchema = new Schema({
-  courseOfferingId: { type: Schema.Types.ObjectId, ref: "CourseOffering", required: true },
+  subjectId: { type: Schema.Types.ObjectId, ref: "Subject", required: true },
+  teacherId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  sessionId : { type: Schema.Types.ObjectId, ref: "User", required: true },
   scheduleId: { type: Schema.Types.ObjectId, ref: "Schedule", required: true },
   date: { type: Date, required: true },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
   qrCode: { type: String },
+  qrLocation: {
+    lat: { type: Number },
+    lng: { type: Number }
+  },
 
   status: {
     type: String, 
