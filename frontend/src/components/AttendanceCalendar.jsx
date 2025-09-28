@@ -15,9 +15,23 @@ export default function AttendanceCalendar({ subject, onClose }) {
   useEffect(() => {
     // Dummy attendance for demo
     const dummy = {
-      "2025-09-05": "present",
-      "2025-09-06": "absent",
-      "2025-09-07": "holiday",
+      "2025-09-01": "present",
+      "2025-09-02": "present",
+      "2025-09-03": "present",
+      "2025-09-04": "present",
+      "2025-09-05": "holiday",
+      "2025-09-08": "present",
+      "2025-09-09": "present",
+      "2025-09-10": "absent",
+      "2025-09-11": "present",
+      "2025-09-12": "present",
+      "2025-09-15": "present",
+      "2025-09-16": "present",
+      "2025-09-17": "absent",
+      "2025-09-18": "absent",
+      "2025-09-19": "absent",
+      "2025-09-22": "absent",
+      "2025-09-23": "present",
     };
     setAttendanceData(dummy);
   }, [subject]);
@@ -49,7 +63,7 @@ export default function AttendanceCalendar({ subject, onClose }) {
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute text-2xl -top-2 right-0 text-white px-3 py-1 rounded-md font-semibold hover:bg-red-500 hover:text-white"
+        className="absolute text-2xl top-2 right-2 text-white px-3 py-1 rounded-md font-semibold hover:bg-red-500 hover:text-white"
       >
         x
       </button>
@@ -96,7 +110,7 @@ export default function AttendanceCalendar({ subject, onClose }) {
           if (status) {
             classes += `${statusColors[status]} backdrop-blur-md border text-white`;
           } else if (formatKey(today) === key) {
-            classes += "bg-pink-600/40 border border-pink-400/30 backdrop-blur-md text-white";
+            // classes += "bg-pink-600/40 border border-pink-400/30 backdrop-blur-md text-white";
           } else if (date > today) {
             classes += "bg-gray-700/40 text-gray-400 opacity-50";
           } else {
@@ -130,10 +144,10 @@ export default function AttendanceCalendar({ subject, onClose }) {
             <span className="h-3 w-3 rounded bg-blue-600/40 border border-blue-400/30"></span>
             Holiday
           </span>
-          <span className="flex items-center gap-2">
+          {/* <span className="flex items-center gap-2">
             <span className="h-3 w-3 rounded bg-pink-600/40 border border-pink-400/30"></span>
             Today
-          </span>
+          </span> */}
         </div>
       </div>
     </div>
