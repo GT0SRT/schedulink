@@ -81,13 +81,13 @@ export default function ReportAbsencePage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Report Absence</h1>
+            <h1 className="text-4xl font-bold text-[#2C3E86]">Report Absence</h1>
             <p className="mt-1 text-gray-500">Manage your leave requests and substitute arrangements</p>
           </div>
           <div>
             <button
               onClick={() => setIsOpen(true)}
-              className="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-2xl shadow hover:opacity-95"
+              className="inline-flex items-center gap-2 bg-[#2C3E86] cursor-pointer text-white px-4 py-2 rounded-2xl shadow hover:opacity-95"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
@@ -171,7 +171,7 @@ export default function ReportAbsencePage() {
           <form onSubmit={handleSubmit} className="relative bg-white max-w-2xl w-full rounded-2xl p-6 z-10 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold">Report New Absence</h3>
-              <button type="button" onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700">Close</button>
+              {/* <button type="button" onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700">Close</button> */}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -238,8 +238,8 @@ export default function ReportAbsencePage() {
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-3">
-              <button type="button" onClick={() => setIsOpen(false)} className="px-4 py-2 rounded-lg border">Cancel</button>
-              <button type="submit" className="px-4 py-2 rounded-lg bg-gray-900 text-white">Submit</button>
+              <button type="button" onClick={() => setIsOpen(false)} className="px-4 py-2 cursor-pointer rounded-lg border">Cancel</button>
+              <button type="submit" className="px-4 cursor-pointer py-2 rounded-lg bg-[#2C3E86] text-white">Submit</button>
             </div>
           </form>
         </div>
