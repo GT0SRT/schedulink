@@ -49,14 +49,14 @@ export default function AttendanceCalendar({ subject, onClose }) {
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute text-2xl top-0 right-2 text-white px-3 py-1 rounded-md font-semibold hover:bg-red-500 hover:text-white"
+        className="absolute text-2xl -top-2 right-0 text-white px-3 py-1 rounded-md font-semibold hover:bg-red-500 hover:text-white"
       >
         x
       </button>
 
       <div className="flex items-center gap-2 mb-4">
         <FaRegCalendarAlt />
-        <h2 className="text-xl font-bold">Attendance for {subject}</h2>
+        <h2 className="text-xl text-center font-bold">Attendance for {subject}</h2>
       </div>
 
       <div className="flex justify-between items-center mb-4">

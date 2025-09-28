@@ -140,7 +140,7 @@ export default function TrackAttendance() {
       {/* Modal for Calendar */}
       {selectedSubject && (
         <div className="fixed inset-0 bg-black/40 bg-opacity-70 z-50 flex justify-center items-center px-4">
-          <div className="bg-[#2C3E86] rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-xl relative">
+          <div className="bg-[#2C3E86] rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-xl relative">
             <AttendanceCalendar subject={selectedSubject.name} onClose={() => setSelectedSubject(null)} />
           </div>
         </div>
