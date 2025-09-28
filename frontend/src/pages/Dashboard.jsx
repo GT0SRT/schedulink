@@ -47,7 +47,7 @@ const Dashboard = () => {
         subject: "Mathematics",
         time: "10:00 - 11:00",
         location: "Room 101",
-        teacher: "Mr. Smith",
+        teacher: "Mr. Ajeet",
         progress: 70,
         remaining: 30,
         present: 20,
@@ -58,7 +58,7 @@ const Dashboard = () => {
         { student: "Priya", message: "Can you share notes?" },
         { student: "Amit", message: "Doubts in last topic." },
       ],
-      username: "Jane Doe",
+      username: "Arun Parmar",
     };
 
     setTimeout(() => {

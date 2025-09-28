@@ -1,5 +1,5 @@
 import React from 'react';
-import loginImg from "../Assets/happy.png";
+import loginImg from "../assets/happy.png";
 
 export default function AuthCard({ title, children }) {
   return (
