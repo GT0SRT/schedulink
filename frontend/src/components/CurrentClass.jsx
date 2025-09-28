@@ -186,7 +186,7 @@ const CurrentClass = ({
           }}
           className="bg-white cursor-pointer text-black rounded-lg py-2 md:py-1 px-4 font-semibold w-full"
         >
-          {attendanceMarked ? 
+          {!attendanceMarked ? 
           <span className="cursor-not-allowed">Attendance Marked</span>:
           'Mark Attendance'}
         </button>
