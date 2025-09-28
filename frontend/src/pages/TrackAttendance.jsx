@@ -1,6 +1,10 @@
 import React, { useState, useMemo } from "react";
-import SubjectCard from "../components/SubjectCard";
+import SubjectCard from "../components/subjectCard";
 import AttendanceCalendar from "../components/AttendanceCalendar";
+import { BsFillPersonCheckFill, BsCalendar2WeekFill } from "react-icons/bs";
+import { SiGoogletasks } from "react-icons/si";
+import { MdOutlineAutoGraph } from "react-icons/md";
+import StatCard from "../components/StatCard";
 
 const THEME_DARK = "#2C3E86";
 const THEME_LIGHT = "#3D57bb";
@@ -12,6 +16,13 @@ const subjectsData = [
   { id: 3, name: "Chemistry", instructor: "Dr. Singh", totalSessions: 22, present: 19 },
   { id: 4, name: "Biology", instructor: "Dr. Rao", totalSessions: 16, present: 10 },
   { id: 5, name: "English", instructor: "Prof. Wilson", totalSessions: 15, present: 14 },
+];
+
+const icons = [
+  <BsFillPersonCheckFill />,
+  <SiGoogletasks />,
+  <MdOutlineAutoGraph />,
+  <BsCalendar2WeekFill />,
 ];
 
 export default function TrackAttendance() {
@@ -30,6 +41,29 @@ export default function TrackAttendance() {
     };
   }, []);
 
+  const stats = [
+  {
+    title: "Overall Attendance",
+    value: `${metrics.overallPct}%`,
+    subtext: `Target ${metrics.target}%`,
+  },
+  {
+    title: "This Month",
+    value: `${metrics.thisMonthCount} present`,
+    subtext: "Monthly count",
+  },
+  {
+    title: "This Week",
+    value: `${metrics.thisWeekCount} present`,
+    subtext: "Weekly count",
+  },
+  {
+    title: "Total Days",
+    value: subjectsData.reduce((s, sub) => s + sub.totalSessions, 0),
+    subtext: "Classes conducted",
+  },
+];
+
   return (
     <div className="p-8 text-white">
       {/* Header */}
@@ -42,38 +76,18 @@ export default function TrackAttendance() {
         </p>
       </div>
 
-      {/* Overview cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6 shadow border" style={{ borderColor: `${THEME_DARK}22` }}>
-          <div className="text-sm text-gray-500">Overall Attendance</div>
-          <div className="text-2xl font-bold mt-2" style={{ color: "#16a34a" }}>
-            {metrics.overallPct}%
-          </div>
-          <div className="text-xs text-gray-400 mt-1">Above target ({metrics.target}%)</div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow border" style={{ borderColor: `${THEME_LIGHT}22` }}>
-          <div className="text-sm text-gray-500">This Month</div>
-          <div className="text-2xl font-bold mt-2" style={{ color: THEME_LIGHT }}>
-            {metrics.thisMonthCount} present
-          </div>
-          <div className="text-xs text-gray-400 mt-1">This month</div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow border" style={{ borderColor: `${THEME_DARK}22` }}>
-          <div className="text-sm text-gray-500">This Week</div>
-          <div className="text-2xl font-bold mt-2" style={{ color: "#8b5cf6" }}>
-            {metrics.thisWeekCount} present
-          </div>
-          <div className="text-xs text-gray-400 mt-1">This week</div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow border" style={{ borderColor: `${THEME_LIGHT}22` }}>
-          <div className="text-sm text-gray-500">Target</div>
-          <div className="text-2xl font-bold mt-2">{metrics.target}%</div>
-          <div className="text-xs text-gray-400 mt-1">Minimum required</div>
-        </div>
-      </div>
+    {/* Overview cards */}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    {stats.map((stat, index) => (
+        <StatCard
+        key={index}
+        title={stat.title}
+        value={stat.value}
+        subtext={stat.subtext}
+        icon={icons[index]}
+        />
+    ))}
+    </div>
 
       {/* Subject-wise attendance */}
       <div className="bg-white rounded-xl p-6 shadow border mb-8" style={{ borderColor: `${THEME_DARK}22` }}>
