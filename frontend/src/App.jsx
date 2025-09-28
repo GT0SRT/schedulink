@@ -21,6 +21,7 @@ import { ReportAbsence } from './pages/ReportAbsence';
 import  MyClasses  from './pages/MyClasses';
 import Test from './pages/Test';
 import QRScanner from './components/QRScanner';
+import TrackAttendance from './pages/TrackAttendance';
 
 function App() {
   const fetchUser = useUserStore((state) => state.fetchUser);
@@ -36,7 +37,7 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="schedule" element={<Schedule />} />
-          <Route path="attendance" element={<Attendance />} />
+          <Route path="attendance" element={<TrackAttendance />} />
           <Route path="feedback" element={<Feedback />} />
           <Route path="Tasks" element={<Tasks />} />
           <Route path="profile" element={<Profile />} />
@@ -48,11 +49,11 @@ function App() {
           <Route path="MyClasses" element={<MyClasses />} />
           {/* <Route path="reports" element={<Reports />} /> */}
           {/* <Route path="help" element={<Help />} /> */}
-          {/* <Route path="test" element={<Test />} /> */}
+          <Route path="test" element={<TrackAttendance />} />
         </Route>
         <Route path="signin" element={<Signin />} />
         <Route path="signup" element={<Signup />} />
-        <Route path="test" element={<QRScanner />} />
+        {/* <Route path="test" element={<TrackAttendance />} /> */}
       </Routes>
     </>
   );
