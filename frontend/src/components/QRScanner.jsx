@@ -12,11 +12,10 @@ const QRScanner = ({ onScanComplete, onClose }) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const loc = {
+          setLocation({
             latitude: pos.coords.latitude,
             longitude: pos.coords.longitude,
-          };
-          setLocation(loc);
+          });
         },
         (err) => {
           setError("Location permission denied or unavailable");
@@ -31,38 +30,35 @@ const QRScanner = ({ onScanComplete, onClose }) => {
 
     Html5Qrcode.getCameras()
       .then((devices) => {
-        if (devices && devices.length) {
-          // Prefer back camera if available
-          const backCamera =
-            devices.find((device) => /back|rear/i.test(device.label)) ||
-            devices[devices.length - 1];
+        const backCamera =
+          devices.find((d) => /back|rear/i.test(d.label)) ||
+          devices[devices.length - 1];
 
-          html5QrCode
-            .start(
-              backCamera.id,
-              {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: window.innerWidth / window.innerHeight,
-              },
-              (decodedText) => {
-                setScannedData(decodedText);
-                setError("");
-                if (onScanComplete) onScanComplete(decodedText, location);
-              },
-              (err) => {
-                // Frame scan error (optional to handle)
-              }
-            )
-            .then(() => {
-              isScannerRunning.current = true;
-            })
-            .catch((err) => {
-              setError("Failed to start scanning: " + err);
-            });
-        } else {
-          setError("No cameras found");
-        }
+        const viewportWidth = window.innerWidth;
+        const qrboxSize = Math.floor(viewportWidth * 0.6); // 60% of screen width
+
+        html5QrCode
+          .start(
+            backCamera.id,
+            {
+              fps: 10,
+              qrbox: { width: qrboxSize, height: qrboxSize },
+              aspectRatio: window.innerWidth / window.innerHeight,
+            },
+            (decodedText) => {
+              setScannedData(decodedText);
+              if (onScanComplete) onScanComplete(decodedText, location);
+            },
+            (err) => {
+              // Scan frame error
+            }
+          )
+          .then(() => {
+            isScannerRunning.current = true;
+          })
+          .catch((err) => {
+            setError("Failed to start scanning: " + err);
+          });
       })
       .catch(() => {
         setError("Camera permission denied or not available");
@@ -90,47 +86,43 @@ const QRScanner = ({ onScanComplete, onClose }) => {
         ✕
       </button>
 
-      {/* QR Reader Container */}
+      {/* QR Reader Fullscreen */}
       <div
         id="qr-reader"
-        className="w-full h-full"
-        style={{
-          position: "relative",
-          overflow: "hidden",
-        }}
+        className="w-full h-full absolute top-0 left-0 z-0"
+        style={{ overflow: "hidden" }}
       />
 
-      {/* Box Overlay (UPI-like scanner box) */}
+      {/* Square overlay box like UPI */}
       <div className="absolute inset-0 z-20 pointer-events-none">
         <div className="w-full h-full flex items-center justify-center">
-          <div className="relative w-64 h-64">
+          <div className="relative w-[60vw] max-w-[300px] aspect-square">
             {/* Box outline */}
-            <div className="absolute inset-0 border-4 border-white rounded-xl shadow-xl"></div>
+            <div className="absolute inset-0 shadow-xl z-30"></div>
 
             {/* Dark overlay around the box */}
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 z-10">
               <div className="w-full h-full backdrop-brightness-50 rounded-xl"></div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scan result */}
+      {/* Scan Result */}
       {scannedData && (
-        <div className="absolute bottom-24 bg-green-800 bg-opacity-70 text-white p-4 rounded max-w-xs text-center">
+        <div className="absolute bottom-24 bg-green-800 bg-opacity-70 text-white p-4 rounded max-w-xs text-center z-30">
           Scanned: {scannedData}
-          <br />
           {location && (
-            <small>
-              Location: {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-            </small>
+            <div className="text-xs mt-1">
+              📍 {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+            </div>
           )}
         </div>
       )}
 
-      {/* Error display */}
+      {/* Error */}
       {error && (
-        <div className="absolute bottom-24 bg-red-800 bg-opacity-70 text-white p-4 rounded max-w-xs text-center">
+        <div className="absolute bottom-24 bg-red-700 bg-opacity-70 text-white p-4 rounded max-w-xs text-center z-30">
           Error: {error}
         </div>
       )}
