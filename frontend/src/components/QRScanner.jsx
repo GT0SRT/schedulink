@@ -90,7 +90,7 @@ const QRScanner = ({ onScanComplete, onClose }) => {
       <div
         id="qr-reader"
         className="w-full h-full absolute top-0 left-0 z-0"
-        {/* style={{ overflow: "hidden" }} */}
+        /* style={{ overflow: "hidden" }} */
       />
 
       {/* Square overlay box like UPI */}
