@@ -215,7 +215,7 @@ const CurrentClass = ({
       {showAttendanceOptions && (
         <div className="fixed inset-0 bg-black/60 bg-opacity-50 z-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md relative">
-            {attendanceMarked ? (
+            {!attendanceMarked ? (
               <div className="text-center">
                 <img
                   src={"https://i.pinimg.com/originals/87/e8/aa/87e8aad244d0eaf10ee53bef90d43b77.gif"}
