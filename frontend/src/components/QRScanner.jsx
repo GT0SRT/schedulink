@@ -9,7 +9,6 @@ const QRScanner = ({ onScanComplete, onClose }) => {
   const isScannerRunning = useRef(false);
 
   useEffect(() => {
-    // Request location permission and fetch once on mount
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -18,16 +17,12 @@ const QRScanner = ({ onScanComplete, onClose }) => {
             longitude: pos.coords.longitude,
           };
           setLocation(loc);
-          console.log("Location fetched:", loc);
         },
         (err) => {
-          console.warn("Location permission denied or unavailable", err);
           setError("Location permission denied or unavailable");
         },
         { enableHighAccuracy: true }
       );
-    } else {
-      setError("Geolocation not supported by this browser.");
     }
 
     const qrRegionId = "qr-reader";
@@ -37,23 +32,26 @@ const QRScanner = ({ onScanComplete, onClose }) => {
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices && devices.length) {
-          const cameraId = devices[0].id;
+          // Prefer back camera if available
+          const backCamera =
+            devices.find((device) => /back|rear/i.test(device.label)) ||
+            devices[devices.length - 1];
+
           html5QrCode
             .start(
-              cameraId,
+              backCamera.id,
               {
                 fps: 10,
-                qrbox: { width: window.innerWidth, height: window.innerHeight },
+                qrbox: { width: 250, height: 250 },
                 aspectRatio: window.innerWidth / window.innerHeight,
               },
               (decodedText) => {
                 setScannedData(decodedText);
                 setError("");
                 if (onScanComplete) onScanComplete(decodedText, location);
-                // Keep scanning unless parent hides this component
               },
               (err) => {
-                // Optionally handle scan failure per frame
+                // Frame scan error (optional to handle)
               }
             )
             .then(() => {
@@ -67,10 +65,9 @@ const QRScanner = ({ onScanComplete, onClose }) => {
         }
       })
       .catch(() => {
-        setError("Camera permission denied or no camera available");
+        setError("Camera permission denied or not available");
       });
 
-    // Cleanup on unmount
     return () => {
       if (html5QrCodeRef.current && isScannerRunning.current) {
         html5QrCodeRef.current
@@ -83,7 +80,7 @@ const QRScanner = ({ onScanComplete, onClose }) => {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen bg-black flex flex-col justify-center items-center">
+    <div className="fixed inset-0 bg-black z-50 flex flex-col justify-center items-center">
       {/* Close Button */}
       <button
         onClick={() => onClose && onClose()}
@@ -93,18 +90,32 @@ const QRScanner = ({ onScanComplete, onClose }) => {
         ✕
       </button>
 
-      {/* QR Reader container */}
+      {/* QR Reader Container */}
       <div
         id="qr-reader"
+        className="w-full h-full"
         style={{
-          width: "100vw",
-          height: "100vh",
-          maxWidth: "100vw",
-          maxHeight: "100vh",
+          position: "relative",
+          overflow: "hidden",
         }}
-      ></div>
+      />
 
-      {/* Scanned data and location display */}
+      {/* Box Overlay (UPI-like scanner box) */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="relative w-64 h-64">
+            {/* Box outline */}
+            <div className="absolute inset-0 border-4 border-white rounded-xl shadow-xl"></div>
+
+            {/* Dark overlay around the box */}
+            <div className="absolute inset-0">
+              <div className="w-full h-full backdrop-brightness-50 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scan result */}
       {scannedData && (
         <div className="absolute bottom-24 bg-green-800 bg-opacity-70 text-white p-4 rounded max-w-xs text-center">
           Scanned: {scannedData}
