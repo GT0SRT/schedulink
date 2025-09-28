@@ -286,7 +286,7 @@ const CurrentClass = ({
             ) : (
               <div className="text-center">
                 <p className="text-gray-700 mb-5">
-                  Scan this QR to mark your attendance and please allow location permission as well.
+                  Scan the QR to mark your attendance and please allow location permission as well.
                 </p>
                 <div className="flex justify-center">
                   <QRScanner

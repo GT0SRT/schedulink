@@ -1,131 +1,110 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
 const QRScanner = ({ onScanComplete, onClose }) => {
-  const [scannedData, setScannedData] = useState("");
-  const [error, setError] = useState("");
-  const [location, setLocation] = useState(null);
+  const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
-  const isScannerRunning = useRef(false);
+  const isRunning = useRef(false);
+
+  // Store onScanComplete in ref to avoid useEffect dependency issues
+  const onScanCompleteRef = useRef(onScanComplete);
+  useEffect(() => {
+    onScanCompleteRef.current = onScanComplete;
+  }, [onScanComplete]);
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setLocation({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          });
-        },
-        (err) => {
-          setError("Location permission denied or unavailable");
-        },
-        { enableHighAccuracy: true }
-      );
-    }
-
-    const qrRegionId = "qr-reader";
+    const qrRegionId = "inline-qr-reader";
     const html5QrCode = new Html5Qrcode(qrRegionId);
     html5QrCodeRef.current = html5QrCode;
 
     Html5Qrcode.getCameras()
       .then((devices) => {
-        const backCamera =
-          devices.find((d) => /back|rear/i.test(d.label)) ||
-          devices[devices.length - 1];
+        if (!devices || devices.length === 0) {
+          throw new Error("No cameras found.");
+        }
 
-        const viewportWidth = window.innerWidth;
-        const qrboxSize = Math.floor(viewportWidth * 0.6); // 60% of screen width
+        const backCamera =
+          devices.find((d) => /back|rear/i.test(d.label)) || devices[0];
 
         html5QrCode
           .start(
             backCamera.id,
             {
               fps: 10,
-              qrbox: { width: qrboxSize, height: qrboxSize },
+              // No qrbox option here to remove scanning box
               aspectRatio: window.innerWidth / window.innerHeight,
             },
             (decodedText) => {
-              setScannedData(decodedText);
-              if (onScanComplete) onScanComplete(decodedText, location);
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const loc = {
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude,
+                  };
+                  onScanCompleteRef.current(decodedText, loc);
+                },
+                () => {
+                  onScanCompleteRef.current(decodedText, null);
+                }
+              );
             },
-            (err) => {
-              // Scan frame error
+            (scanError) => {
+              // Optional: handle scan errors if needed
             }
           )
           .then(() => {
-            isScannerRunning.current = true;
+            isRunning.current = true;
           })
           .catch((err) => {
-            setError("Failed to start scanning: " + err);
+            console.error("Failed to start QR code scanner", err);
           });
       })
-      .catch(() => {
-        setError("Camera permission denied or not available");
+      .catch((err) => {
+        console.error("Camera error:", err);
       });
 
     return () => {
-      if (html5QrCodeRef.current && isScannerRunning.current) {
+      if (html5QrCodeRef.current && isRunning.current) {
         html5QrCodeRef.current
           .stop()
           .then(() => html5QrCodeRef.current.clear())
           .catch(() => {});
-        isScannerRunning.current = false;
+        isRunning.current = false;
       }
     };
-  }, []);
+  }, []); // empty dependency array now safe
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col justify-center items-center">
-      {/* Close Button */}
-      <button
-        onClick={() => onClose && onClose()}
-        className="absolute top-6 right-6 z-50 bg-black bg-opacity-50 text-white p-3 rounded-full text-xl font-bold"
-        aria-label="Close scanner"
-      >
-        ✕
-      </button>
+    <div className="w-full max-w-xs mx-auto">
+      {/* CSS overrides */}
+      <style>{`
+        /* Hide scanning box and overlays */
+        .html5-qrcode-box,
+        .html5-qrcode-scanning-region canvas,
+        .html5-qrcode-overlay {
+          display: none !important;
+        }
 
-      {/* QR Reader Fullscreen */}
+        /* Make video fill container cleanly */
+        #inline-qr-reader video {
+          object-fit: cover !important;
+          filter: none !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+      `}</style>
+
       <div
-        id="qr-reader"
-        className="w-full h-full absolute top-0 left-0 z-0"
-        style={{ overflow: "hidden" }}
+        id="inline-qr-reader"
+        className="w-full aspect-square border border-gray-300 rounded-md overflow-hidden"
+        ref={scannerRef}
       />
-
-      {/* Square overlay box like UPI */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="relative w-[60vw] max-w-[300px] aspect-square">
-            {/* Box outline */}
-            <div className="absolute inset-0 shadow-xl z-30"></div>
-
-            {/* Dark overlay around the box */}
-            <div className="absolute inset-0 z-10">
-              <div className="w-full h-full backdrop-brightness-50 rounded-xl"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scan Result */}
-      {scannedData && (
-        <div className="absolute bottom-24 bg-green-800 bg-opacity-70 text-white p-4 rounded max-w-xs text-center z-30">
-          Scanned: {scannedData}
-          {location && (
-            <div className="text-xs mt-1">
-              📍 {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Error */}
-      {error && (
-        <div className="absolute bottom-24 bg-red-700 bg-opacity-70 text-white p-4 rounded max-w-xs text-center z-30">
-          Error: {error}
-        </div>
-      )}
+      {/* <button
+        onClick={onClose}
+        className="mt-4 w-full bg-red-600 text-white py-2 px-4 rounded-lg"
+      >
+        Cancel
+      </button> */}
     </div>
   );
 };
