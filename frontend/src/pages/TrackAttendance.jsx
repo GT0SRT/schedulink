@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import SubjectCard from "../components/SubjectCard";
+import SubjectCard from "../components/subjectCard";
 import AttendanceCalendar from "../components/AttendanceCalendar";
 
 const THEME_DARK = "#2C3E86";
