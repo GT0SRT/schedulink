@@ -15,6 +15,7 @@ import useUserStore from './store/userStore';
 import PrivateRoute from './components/PrivateRoute';
 import Overview from './pages/Overview';
 import HelpSupportPage from './pages/Help';
+import ReportsAnalyticsPage from './pages/Adminreport';
 
 import ManageTeachersPage from './pages/Teachers';
 
@@ -47,6 +48,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="reportabsence" element={<ReportAbsencePage />} />
           <Route path="help" element={<HelpSupportPage />} />
+          <Route path="reports" element={<ReportsAnalyticsPage />} />
 
 
 
