@@ -202,7 +202,7 @@ const Schedule = () => {
   const subjects = ["All", ...new Set(schedule.map((s) => s.subject))];
 
   return (
-    <div className="p-10 overflow-x-auto">
+    <div className="p-4 sm:p-6 md:p-10 overflow-x-auto">
         <div className="flex flex-row justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Class Schedule</h1>
@@ -224,7 +224,7 @@ const Schedule = () => {
         </select>
       </div>
 
-        <div className="border border-gray-200 p-10 rounded-2xl w-[600px] md:w-full">
+        <div className="border border-gray-200 p-4 sm:p-6 md:p-10 rounded-2xl w-full min-w-[700px]">
           <div className="flex flex-wrap gap-4 items-center mb-6">
             <div className="flex gap-2 ml-auto">
               <button
