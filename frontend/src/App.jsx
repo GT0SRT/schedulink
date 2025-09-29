@@ -20,7 +20,7 @@ import ReportsAnalyticsPage from './pages/Adminreport';
 import ManageTeachersPage from './pages/Teachers';
 
 import { Students } from './pages/Students';
-import { ManageSchedules } from './pages/ManageSchedules';
+import  ManageSchedules  from './pages/ManageSchedules';
 import ReportAbsencePage from './pages/ReportAbsence';
 
 import MyClasses from './pages/MyClasses';
