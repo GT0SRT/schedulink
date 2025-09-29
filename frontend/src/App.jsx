@@ -13,7 +13,7 @@ import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import useUserStore from './store/userStore';
 import PrivateRoute from './components/PrivateRoute';
-import { Overview } from './pages/Overview';
+import Overview from './pages/Overview';
 import HelpSupportPage from './pages/Help';
 
 import ManageTeachersPage from './pages/Teachers';
