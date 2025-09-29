@@ -14,6 +14,7 @@ import Signup from './pages/Signup';
 import useUserStore from './store/userStore';
 import PrivateRoute from './components/PrivateRoute';
 import { Overview } from './pages/Overview';
+import HelpSupportPage from './pages/Help';
 
 import ManageTeachersPage from './pages/Teachers';
 
@@ -45,12 +46,15 @@ function App() {
           <Route path="Tasks" element={<Tasks />} />
           <Route path="profile" element={<Profile />} />
           <Route path="reportabsence" element={<ReportAbsencePage />} />
+          <Route path="help" element={<HelpSupportPage />} />
+
 
 
 
           <Route path="overview" element={<Overview />} />
           <Route path="schedules" element={<ManageSchedules />} />
           <Route path="teachers" element={<ManageTeachersPage />} />
+
 
           <Route path="students" element={<Students />} />
           <Route path="MyClasses" element={<MyClasses />} />
