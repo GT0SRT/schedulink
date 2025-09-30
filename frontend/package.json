@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "axios": "^1.11.0",
     "axois": "^0.0.1-security",
     "framer-motion": "^12.23.12",
+    "heroicons": "^2.2.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.542.0",
     "moment": "^2.30.1",
