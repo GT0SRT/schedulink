@@ -99,19 +99,19 @@ export default function ReportAbsencePage() {
 
         {/* stats */}
         <div className="flex gap-2 mb-8">
-          <div className="p-6 bg-white rounded-xl shadow-sm">
+          <div className="p-6 bg-white rounded-xl shadow-sm w-1/3">
             <div className="text-sm text-gray-500">Total Absences</div>
             <div className="text-3xl font-semibold mt-2">{absences.length}</div>
             <div className="text-xs text-gray-400 mt-1">This academic year</div>
           </div>
 
-          <div className="p-6 bg-white rounded-xl shadow-sm">
+          <div className="p-6 bg-white rounded-xl shadow-sm w-1/3">
             <div className="text-sm text-gray-500">Pending Requests</div>
             <div className="text-3xl font-semibold mt-2">{absences.filter((a) => a.status === "Pending").length}</div>
             <div className="text-xs text-gray-400 mt-1">Awaiting approval</div>
           </div>
 
-          <div className="p-6 bg-white rounded-xl shadow-sm">
+          <div className="p-6 bg-white rounded-xl shadow-sm w-1/3">
             <div className="text-sm text-gray-500">Approved</div>
             <div className="text-3xl font-semibold mt-2">{absences.filter((a) => a.status === "Approved").length}</div>
             <div className="text-xs text-gray-400 mt-1">This year</div>

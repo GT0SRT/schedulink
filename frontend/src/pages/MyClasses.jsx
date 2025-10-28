@@ -114,7 +114,7 @@ const MyClasses = () => {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-blue-600 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/40 h-screen flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-2xl w-[90%] md:w-[450px] shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Add New Plan</h3>

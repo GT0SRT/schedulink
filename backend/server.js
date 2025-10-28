@@ -116,6 +116,7 @@ app.post('/logout', (req, res) => {
 });
 
 app.use('/api/generateQR', qrRoutes);
+app.use("/api/timetable", timetableRoutes);
 
 // Server
 const port = process.env.PORT || 4000;

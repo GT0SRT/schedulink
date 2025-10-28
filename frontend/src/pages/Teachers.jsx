@@ -304,11 +304,11 @@ export default function ManageTeachersPage() {
               <tr className="text-sm text-gray-500 border-b">
                 <th className="py-3">Teacher</th>
                 <th>Department</th>
-                <th>Experience</th>
-                <th>Rating</th>
-                <th>Classes</th>
-                <th>Students</th>
-                <th>Status</th>
+                <th className="p-1">Experience</th>
+                <th className="p-1">Rating</th>
+                <th className="p-1">Classes</th>
+                <th className="p-1">Students</th>
+                <th className="p-1">Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -341,8 +341,8 @@ export default function ManageTeachersPage() {
                     </div>
                   </td>
 
-                  <td>{t.classesCount}</td>
-                  <td>{t.studentsCount}</td>
+                  <td className="text-center">{t.classesCount}</td>
+                  <td className="text-center">{t.studentsCount}</td>
 
                   <td>
                     <span className={`px-3 py-1 rounded-full text-sm ${t.status === "active" ? "bg-[#e6f0ff] text-[#2C3E86]" : "bg-gray-100 text-gray-600"}`}>
@@ -430,23 +430,23 @@ export default function ManageTeachersPage() {
                 <input type="number" step="0.1" value={form.rating} onChange={(e) => setForm((f) => ({ ...f, rating: e.target.value }))} className="border p-2 rounded" />
               </label>
 
-              <label className="flex flex-col">
+              {/* <label className="flex flex-col">
                 <span className="text-sm text-gray-600">Classes Count</span>
                 <input type="number" value={form.classesCount} onChange={(e) => setForm((f) => ({ ...f, classesCount: e.target.value }))} className="border p-2 rounded" />
-              </label>
+              </label> */}
 
-              <label className="flex flex-col">
+              {/* <label className="flex flex-col">
                 <span className="text-sm text-gray-600">Students Count</span>
                 <input type="number" value={form.studentsCount} onChange={(e) => setForm((f) => ({ ...f, studentsCount: e.target.value }))} className="border p-2 rounded" />
-              </label>
+              </label> */}
 
-              <label className="flex flex-col">
+              {/* <label className="flex flex-col">
                 <span className="text-sm text-gray-600">Status</span>
                 <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} className="border p-2 rounded">
                   <option value="active">active</option>
                   <option value="inactive">inactive</option>
                 </select>
-              </label>
+              </label> */}
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-3">

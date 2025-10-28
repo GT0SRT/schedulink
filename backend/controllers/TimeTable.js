@@ -1,94 +1,71 @@
-class Timetable {
-    createPeriod = async (req, res) => {
-         const { className, day } = req.params;
-         const { subject, teacher, isLab, duration } = req.body;
-     
-         const timetable = await Timetable.findOne({ className });
-         if (!timetable) return res.status(404).json({ message: "Timetable not found" });
-     
-         const targetDay = timetable.week.find(d => d.day === day);
-         if (!targetDay) return res.status(404).json({ message: "Day not found" });
-     
-         const used = targetDay.periods.reduce((sum, p) => sum + p.duration, 0);
-         if (used + duration > targetDay.maxPeriods) {
-             return res.status(400).json({ message: "Exceeds max periods" });
-         }
-     
-         targetDay.periods.push({ subject, teacher, isLab, duration });
-         await timetable.save();
-     
-         res.status(201).json({ message: "Period added", timetable });
-   };
+const TimeTable = require("../models/TimeTable");
 
-   getPeriods = async (req, res) => {
-        const { className, day } = req.params;
-    
-        const timetable = await Timetable.findOne({ className });
-        if (!timetable) return res.status(404).json({ message: "Timetable not found" });
-    
-        const targetDay = timetable.week.find(d => d.day === day);
-        if (!targetDay) return res.status(404).json({ message: "Day not found" });
-    
-        res.json(targetDay.periods);
-    };
+// ✅ Create or Add a period to a day
+exports.createPeriod = async (req, res) => {
+  const { className, day } = req.params;
+  const { subject, teacher, room, time, color } = req.body;
 
-    updatePeriod = async (req, res) => {
-        const { className, day, periodId } = req.params;
-        const updates = req.body;
-    
-        const timetable = await Timetable.findOne({ className });
-        if (!timetable) return res.status(404).json({ message: "Timetable not found" });
-    
-        const targetDay = timetable.week.find(d => d.day === day);
-        if (!targetDay) return res.status(404).json({ message: "Day not found" });
-    
-        const period = targetDay.periods.id(periodId);
-        if (!period) return res.status(404).json({ message: "Period not found" });
-    
-        Object.assign(period, updates);
-        await timetable.save();
-    
-        res.json({ message: "Period updated", period });
-    };
+  let timetable = await TimeTable.findOne({ department: className, day });
 
-    deletePeriod = async (req, res) => {
-        const { className, day, periodId } = req.params;
-    
-        const timetable = await Timetable.findOne({ className });
-        if (!timetable) return res.status(404).json({ message: "Timetable not found" });
-    
-        const targetDay = timetable.week.find(d => d.day === day);
-        if (!targetDay) return res.status(404).json({ message: "Day not found" });
-    
-        const period = targetDay.periods.id(periodId);
-        if (!period) return res.status(404).json({ message: "Period not found" });
-    
-        period.remove();
-        await timetable.save();
-    
-        res.json({ message: "Period deleted" });
-    };
-    
-    markTeacherAbsent = async (req, res) => {
-        const { className, date, teacher } = req.body;
-    
-        const timetable = await Timetable.findOne({ className });
-        if (!timetable) return res.status(404).json({ message: "Timetable not found" });
-    
-        const dayName = new Date(date).toLocaleDateString("en-US", { weekday: "long" });
-        const targetDay = timetable.week.find(d => d.day === dayName);
-        if (!targetDay) return res.status(404).json({ message: "Day not found" });
-    
-        targetDay.periods.forEach(period => {
-            if (period.teacher === teacher) {
-                period.status = "Absent";
-            }
-        });
-    
-        await timetable.save();
-    
-        res.json({ message: `All periods for ${teacher} on ${date} marked absent`, targetDay });
-    };
-}
+  if (!timetable) {
+    timetable = new TimeTable({
+      department: className,
+      day,
+      periods: [{ subject, teacher, room, time, color }],
+    });
+  } else {
+    timetable.periods.push({ subject, teacher, room, time, color });
+  }
 
-export default new Timetable();
+  await timetable.save();
+  res.status(201).json({ message: "Period added successfully", timetable });
+};
+
+// ✅ Get all periods for a department/day
+exports.getPeriods = async (req, res) => {
+  const { className, day } = req.params;
+  const timetable = await TimeTable.findOne({ department: className, day });
+  res.status(200).json(timetable || { department: className, day, periods: [] });
+};
+
+// ✅ Update a specific period
+exports.updatePeriod = async (req, res) => {
+  const { className, day, periodId } = req.params;
+  const updateData = req.body;
+
+  const timetable = await TimeTable.findOne({ department: className, day });
+  if (!timetable) return res.status(404).json({ message: "Not found" });
+
+  const period = timetable.periods.id(periodId);
+  if (!period) return res.status(404).json({ message: "Period not found" });
+
+  Object.assign(period, updateData);
+  await timetable.save();
+
+  res.status(200).json({ message: "Period updated successfully", timetable });
+};
+
+// ✅ Delete a period
+exports.deletePeriod = async (req, res) => {
+  const { className, day, periodId } = req.params;
+
+  const timetable = await TimeTable.findOne({ department: className, day });
+  if (!timetable) return res.status(404).json({ message: "Not found" });
+
+  timetable.periods.id(periodId).deleteOne();
+  await timetable.save();
+
+  res.status(200).json({ message: "Period deleted successfully", timetable });
+};
+
+// (Optional) Example extra endpoint
+exports.markTeacherAbsent = async (req, res) => {
+  const { teacher } = req.body;
+  await TimeTable.updateMany(
+    { "periods.teacher": teacher },
+    { $set: { "periods.$[elem].teacher": "Absent" } },
+    { arrayFilters: [{ "elem.teacher": teacher }] }
+  );
+
+  res.status(200).json({ message: `${teacher} marked absent in all schedules` });
+};

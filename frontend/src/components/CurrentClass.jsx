@@ -159,7 +159,7 @@ const CurrentClass = ({
               className="bg-white text-black rounded-lg py-2 md:py-1 px-4 font-semibold w-2/3"
               disabled={isGenerating}
             >
-              {isGenerating ? "Generating…" : "Start Class"}
+              {isGenerating ? "Generating…" : "Show QR"}
             </button>
           ) : (
             <button
@@ -170,10 +170,10 @@ const CurrentClass = ({
             </button>
           )}
           <button
-            className="bg-white text-black rounded-lg py-1 md:py-1 px-2 font-semibold w-1/3"
+            className="bg-white text-black rounded-lg py-1 md:py-1 px-2 font-semibold w-1/2"
             onClick={() => setShowForm(true)}
           >
-            Add Plan
+            show Plan
           </button>
         </div>
       )}

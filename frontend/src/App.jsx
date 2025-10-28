@@ -18,7 +18,7 @@ import HelpSupportPage from './pages/Help';
 
 import ManageTeachersPage from './pages/Teachers';
 
-import { Students } from './pages/Students';
+import Students from './pages/Students';
 import { ManageSchedules } from './pages/ManageSchedules';
 import ReportAbsencePage from './pages/ReportAbsence';
 
