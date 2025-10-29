@@ -9,6 +9,7 @@ const User = require('./models/user');
 const app = express();
 const salt = bcrypt.genSaltSync(10);
 const qrRoutes = require('./routes/generateQR');
+const timetableRoutes = require('./routes/timetable.route');
 
 app.use(cors({ origin: process.env.WEB_URI, credentials: true }));
 app.use(express.json());

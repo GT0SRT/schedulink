@@ -13,15 +13,13 @@ import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import useUserStore from './store/userStore';
 import PrivateRoute from './components/PrivateRoute';
-import { Overview } from './pages/Overview';
+import Overview from './pages/Overview';
 import HelpSupportPage from './pages/Help';
-
+import ReportsAnalyticsPage from './pages/Adminreport';
 import ManageTeachersPage from './pages/Teachers';
-
 import Students from './pages/Students';
-import { ManageSchedules } from './pages/ManageSchedules';
+import ManageSchedules from './pages/ManageSchedules';
 import ReportAbsencePage from './pages/ReportAbsence';
-
 import MyClasses from './pages/MyClasses';
 import Test from './pages/Test';
 import QRScanner from './components/QRScanner';
@@ -47,6 +45,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="reportabsence" element={<ReportAbsencePage />} />
           <Route path="help" element={<HelpSupportPage />} />
+          <Route path="reports" element={<ReportsAnalyticsPage />} />
 
 
 

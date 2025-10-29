@@ -1,6 +1,6 @@
 const TimeTable = require("../models/TimeTable");
 
-// ✅ Create or Add a period to a day
+// Create and add period to a day
 exports.createPeriod = async (req, res) => {
   const { className, day } = req.params;
   const { subject, teacher, room, time, color } = req.body;
@@ -21,31 +21,25 @@ exports.createPeriod = async (req, res) => {
   res.status(201).json({ message: "Period added successfully", timetable });
 };
 
-// ✅ Get all periods for a department/day
-exports.getPeriods = async (req, res) => {
-  const { className, day } = req.params;
-  const timetable = await TimeTable.findOne({ department: className, day });
-  res.status(200).json(timetable || { department: className, day, periods: [] });
+// Get the full timetable for a department/class
+exports.getTimeTableByDepartment = async (req, res) => {
+  const { className } = req.params;
+
+  try {
+    const timetable = await TimeTable.find({ department: className });
+
+    if (!timetable || timetable.length === 0) {
+      return res.status(404).json({ message: "Timetable not found for this department" });
+    }
+    // Send back all days and periods
+    res.status(200).json({ department: className, timetable });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error while fetching timetable" });
+  }
 };
 
-// ✅ Update a specific period
-exports.updatePeriod = async (req, res) => {
-  const { className, day, periodId } = req.params;
-  const updateData = req.body;
-
-  const timetable = await TimeTable.findOne({ department: className, day });
-  if (!timetable) return res.status(404).json({ message: "Not found" });
-
-  const period = timetable.periods.id(periodId);
-  if (!period) return res.status(404).json({ message: "Period not found" });
-
-  Object.assign(period, updateData);
-  await timetable.save();
-
-  res.status(200).json({ message: "Period updated successfully", timetable });
-};
-
-// ✅ Delete a period
+// delete a period
 exports.deletePeriod = async (req, res) => {
   const { className, day, periodId } = req.params;
 
@@ -56,16 +50,4 @@ exports.deletePeriod = async (req, res) => {
   await timetable.save();
 
   res.status(200).json({ message: "Period deleted successfully", timetable });
-};
-
-// (Optional) Example extra endpoint
-exports.markTeacherAbsent = async (req, res) => {
-  const { teacher } = req.body;
-  await TimeTable.updateMany(
-    { "periods.teacher": teacher },
-    { $set: { "periods.$[elem].teacher": "Absent" } },
-    { arrayFilters: [{ "elem.teacher": teacher }] }
-  );
-
-  res.status(200).json({ message: `${teacher} marked absent in all schedules` });
 };
