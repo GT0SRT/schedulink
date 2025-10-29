@@ -4,6 +4,7 @@ import { FaClock } from "react-icons/fa";
 import { BsCalendar2DateFill, BsFillPersonCheckFill } from "react-icons/bs";
 import { SiGoogletasks } from "react-icons/si";
 import { MdOutlineAutoGraph } from "react-icons/md";
+import axios from "axios";
 
 const baseDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const times = [
@@ -42,15 +43,19 @@ const ManageSchedules = () => {
   const fetchTimeTable = async () => {
     // setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/timetable/${selectedDept}`,{
-        headers: { "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!res.ok) throw new Error("Failed to fetch timetable");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/timetable/${encodeURIComponent(selectedDept)}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          withCredentials: true,
+        }
+      );
+      if (res.status !== 200) throw new Error("Failed to fetch timetable");
 
-      const data = await res.json();
-      setTimetable([...data.timetable]);
+      setTimetable([...res.data.timetable]);
     } catch (err) {
       console.error("Error fetching timetable:", err);
     } finally {
@@ -61,68 +66,69 @@ const ManageSchedules = () => {
     if (selectedDept) fetchTimeTable();
   }, [selectedDept]);
 
-  const handleAddClass = async () => {
-    const classData = { ...newClass, color: generateColor() };
+const addClassToBackend = async (department, classData) => {
+  const API_BASE = import.meta.env.VITE_API_URL || "";
+  const className = encodeURIComponent(department);
+  const day = encodeURIComponent(classData.day || "");
+  const url = `${API_BASE}/api/timetable/${className}/${day}/period`;
 
-    try {
-      const saved = await addClassToBackend(selectedDept, classData);
+  console.debug("Posting timetable to:", url, { department, ...classData });
 
-      // append saved period returned by backend into local state
-      setSchedules((prev) => ({
-        ...prev,
-        [selectedDept]: [...(prev[selectedDept] || []), saved],
-      }));
+  try {
+    const res = await axios.post(
+      url,{
+        time: classData.time,
+        subject: classData.subject,
+        room: classData.room,
+        teacher: classData.teacher,
+        color: classData.color,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error(
+      "Error posting timetable:",
+      err.response?.data || err.message
+    );
+    throw new Error(
+      err.response?.data?.message ||
+        `Failed to post timetable: ${err.message}`
+    );
+  }
+};
 
-      setShowModal(false);
-      setNewClass({ subject: "", teacher: "", room: "", day: baseDays[0], time: times[0] });
-    } catch (err) {
-      console.error("Failed to add class:", err);
-      alert("Failed to add class. See console for details.");
-    }
-  };
+// Main function that uses it
+const handleAddClass = async () => {
+  const classData = { ...newClass, color: generateColor() };
+  try {
+    const saved = await addClassToBackend(selectedDept, classData);
+    setSchedules((prev) => ({
+      ...prev,
+      [selectedDept]: [...(prev[selectedDept] || []), saved],
+    }));
 
-  // POST -> /api/timetable/:className/:day/period
-  const addClassToBackend = async (department, classData) => {
-    const API_BASE = import.meta.env.VITE_API_URL || "";
-    const className = encodeURIComponent(department);
-    const day = encodeURIComponent(classData.day || "");
-    const url = `${API_BASE}/api/timetable/${className}/${day}/period`;
+    setShowModal(false);
+    setNewClass({
+      subject: "",
+      teacher: "",
+      room: "",
+      day: baseDays[0],
+      time: times[0],
+    });
 
-    console.debug("Posting timetable to:", url, { department, ...classData });
-
-    let res;
-    try {
-      res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          time: classData.time,
-          subject: classData.subject,
-          room: classData.room,
-          teacher: classData.teacher,
-          color: classData.color,
-        }),
-      });
-      // toast.success("Class added successfully!");
-    } catch (networkErr) {
-      console.error("Network error:", networkErr);
-      throw new Error("Network error when contacting backend: " + networkErr.message);
-    }
-
-    const text = await res.text().catch(() => "");
-
-    if (!res.ok) {
-      console.error("Backend error:", res.status, text);
-      throw new Error(`Backend returned ${res.status}: ${text || res.statusText}`);
-    }
-
-    try {
-      return JSON.parse(text);
-    } catch {
-      return { ...classData, _serverResponse: text };
-    }
-  };
+    // toast.success("Class added successfully!");
+  } catch (err) {
+    console.error("Failed to add class:", err);
+    alert("Failed to add class. See console for details.");
+  }
+};
 
   return (
     <div className="p-4 sm:p-6 md:p-10 overflow-x-auto">
