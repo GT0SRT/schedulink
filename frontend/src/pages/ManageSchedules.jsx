@@ -44,6 +44,7 @@ const ManageSchedules = () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/timetable/${selectedDept}`,{
         headers: { "Content-Type": "application/json",
+        credentials: 'include',
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
