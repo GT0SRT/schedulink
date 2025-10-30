@@ -7,6 +7,7 @@ import useUserStore from "../store/userStore";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { HiOutlineDocumentReport } from "react-icons/hi";
+import { FaBuilding } from "react-icons/fa";
 
 const studentMenu = [
   { name: "Dashboard", icon: <FiBookOpen size={20} />, path: "/dashboard" },
@@ -28,6 +29,7 @@ const teacherMenu = [
 const adminMenu = [
   { name: "Overview", icon: <FiBarChart2 size={20} />, path: "/overview" },
   { name: "Manage Schedules", icon: <FiCalendar size={20} />, path: "/schedules" },
+  { name: "Manage Departments", icon: <FaBuilding size={20} />, path: "/departments" },
   { name: "Manage Teachers", icon: <FaChalkboardTeacher size={20} />, path: "/teachers" },
   { name: "Manage Students", icon: <FaUserGraduate size={20} />, path: "/students" },
   { name: "Reports", icon: <HiOutlineDocumentReport size={20} />, path: "/reports" },

@@ -118,6 +118,8 @@ app.post('/logout', (req, res) => {
 
 app.use('/api/generateQR', qrRoutes);
 app.use("/api/timetable", timetableRoutes);
+app.use("/api/teacher", require("./routes/teacher.route"));
+app.use("/api/department", require("./routes/department.route"));
 
 // Server
 const port = process.env.PORT || 4000;

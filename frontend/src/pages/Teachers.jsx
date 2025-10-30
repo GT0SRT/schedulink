@@ -1,202 +1,114 @@
+import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
-
-// ManageTeachersPage.jsx
-// Single-file React component using Tailwind CSS.
-// Theme primary color: #2C3E86 (used across buttons and accents)
-// Features:
-// - List of teachers with avatars, departments, experience, rating, classes, students, status
-// - Search, department filter, status filter
-// - Add Teacher modal
-// - Edit, View and Delete actions
-// - Toggle Active/Inactive
-// - Export CSV
-// - LocalStorage persistence (so changes survive reload during development)
 
 export default function ManageTeachersPage() {
   const PRIMARY = "#2C3E86";
+  const DEPARTMENTS = ["Computer Science", "Electronics", "Civil"];
+  const [teachers, setTeachers] = useState([]);
 
-  const initial = [
-    {
-      id: 1,
-      name: "Dr. Sarah Johnson",
-      email: "sarah.johnson@university.edu",
-      dept: "Computer Science",
-      subdept: "Machine Learning",
-      experience: 8,
-      rating: 4.8,
-      classesCount: 45,
-      studentsCount: 320,
-      status: "active",
-    },
-    {
-      id: 2,
-      name: "Prof. Michael Chen",
-      email: "michael.chen@university.edu",
-      dept: "Electronics",
-      subdept: "Digital Signal Processing",
-      experience: 12,
-      rating: 4.6,
-      classesCount: 38,
-      studentsCount: 280,
-      status: "active",
-    },
-    {
-      id: 3,
-      name: "Dr. Emily Rodriguez",
-      email: "emily.rodriguez@university.edu",
-      dept: "Mechanical",
-      subdept: "Thermodynamics",
-      experience: 6,
-      rating: 4.4,
-      classesCount: 32,
-      studentsCount: 240,
-      status: "active",
-    },
-    {
-      id: 4,
-      name: "Dr. James Wilson",
-      email: "james.wilson@university.edu",
-      dept: "Civil",
-      subdept: "Structural Engineering",
-      experience: 10,
-      rating: 4.7,
-      classesCount: 28,
-      studentsCount: 180,
-      status: "inactive",
-    },
-  ];
-
-  const [teachers, setTeachers] = useState(() => {
+  const fetchMyTeachers = async () => {
     try {
-      const raw = localStorage.getItem("teachers-data");
-      return raw ? JSON.parse(raw) : initial;
-    } catch (e) {
-      return initial;
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/teacher/my-teachers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
+      // Normalize each teacher to always have `dept`
+      const list = (res.data.teachers || []).map((t) => ({
+        ...t,
+        dept: t.dept || t.department || "Unknown",
+        // ensure numeric fields exist
+        rating: typeof t.rating === "number" ? t.rating : Number(t.rating) || 0,
+        experience: typeof t.experience === "number" ? t.experience : Number(t.experience) || 0,
+        classesCount: typeof t.classesCount === "number" ? t.classesCount : Number(t.classesCount) || 0,
+        studentsCount: typeof t.studentsCount === "number" ? t.studentsCount : Number(t.studentsCount) || 0,
+      }));
+
+      setTeachers(list);
+      console.log("Teachers fetched successfully");
+      return list;
+    } catch (err) {
+      console.error("Error fetching teachers for admin:", err.response?.data || err.message);
+      throw err;
     }
-  });
+  };
 
   useEffect(() => {
-    localStorage.setItem("teachers-data", JSON.stringify(teachers));
-  }, [teachers]);
+    fetchMyTeachers();
+  }, []);
 
   const [query, setQuery] = useState("");
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("All Status");
-
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
-
-  const departments = useMemo(() => {
-    const ds = new Set(teachers.map((t) => t.dept));
-    return ["All Departments", ...Array.from(ds)];
-  }, [teachers]);
-
   const statuses = ["All Status", "active", "inactive"];
 
+  // dynamic department options (includes default list + any departments from fetched data)
+  const deptOptions = useMemo(() => {
+    const fromData = Array.from(new Set(teachers.map((t) => t.dept).filter(Boolean)));
+    const merged = Array.from(new Set(["All Departments", ...DEPARTMENTS, ...fromData]));
+    return merged;
+  }, [teachers]);
+
   const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
     return teachers
       .filter((t) => {
-        const q = query.trim().toLowerCase();
         if (q) {
           return (
-            t.name.toLowerCase().includes(q) ||
-            t.email.toLowerCase().includes(q) ||
-            t.dept.toLowerCase().includes(q) ||
-            t.subdept.toLowerCase().includes(q)
+            (t.name || "").toLowerCase().includes(q) ||
+            (t.email || "").toLowerCase().includes(q) ||
+            (t.dept || "").toLowerCase().includes(q) ||
+            (t.subdept || "").toLowerCase().includes(q)
           );
         }
         return true;
       })
-      .filter((t) => (deptFilter === "All Departments" ? true : t.dept === deptFilter))
-      .filter((t) => (statusFilter === "All Status" ? true : t.status === statusFilter));
+      .filter((t) => (deptFilter === "All Departments" ? true : (t.dept || "") === deptFilter))
+      .filter((t) => (statusFilter === "All Status" ? true : (t.status || "") === statusFilter));
   }, [teachers, query, deptFilter, statusFilter]);
 
   // Add teacher form state
   const [form, setForm] = useState({
-    name: "",
     email: "",
     dept: "",
-    subdept: "",
-    experience: "",
-    rating: "4.5",
-    classesCount: "0",
-    studentsCount: "0",
-    status: "active",
   });
 
   function resetForm() {
-    setForm({ name: "", email: "", dept: "", subdept: "", experience: "", rating: "4.5", classesCount: "0", studentsCount: "0", status: "active" });
+    setForm({ email: "", dept: "" });
   }
 
-  function handleAdd(e) {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.dept) {
-      alert("Please fill name, email and department.");
-      return;
+  const handleInviteTeacher = async ({ email, department }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/teacher/invite`,
+        { email, department },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      return res.data;
+    } catch (err) {
+      console.error("Invite teacher error:", err.response?.data || err.message);
+      throw err.response?.data || err;
     }
-    const next = {
-      id: Date.now(),
-      name: form.name,
-      email: form.email,
-      dept: form.dept,
-      subdept: form.subdept,
-      experience: Number(form.experience || 0),
-      rating: Number(form.rating || 0),
-      classesCount: Number(form.classesCount || 0),
-      studentsCount: Number(form.studentsCount || 0),
-      status: form.status,
-    };
-    setTeachers((t) => [next, ...t]);
-    resetForm();
-    setIsAddOpen(false);
-  }
+  };
 
   function handleDelete(id) {
     setTeachers((t) => t.filter((x) => x.id !== id));
     setConfirmDelete(null);
-  }
-
-  function handleToggleStatus(id) {
-    setTeachers((t) => t.map((x) => (x.id === id ? { ...x, status: x.status === "active" ? "inactive" : "active" } : x)));
-  }
-
-  function openEdit(tchr) {
-    setEditing(tchr);
-    setForm({
-      name: tchr.name,
-      email: tchr.email,
-      dept: tchr.dept,
-      subdept: tchr.subdept,
-      experience: String(tchr.experience),
-      rating: String(tchr.rating),
-      classesCount: String(tchr.classesCount),
-      studentsCount: String(tchr.studentsCount),
-      status: tchr.status,
-    });
-    setIsEditOpen(true);
-  }
-
-  function handleEdit(e) {
-    e.preventDefault();
-    if (!editing) return;
-    setTeachers((t) => t.map((x) => (x.id === editing.id ? { ...x, ...{
-      name: form.name,
-      email: form.email,
-      dept: form.dept,
-      subdept: form.subdept,
-      experience: Number(form.experience || 0),
-      rating: Number(form.rating || 0),
-      classesCount: Number(form.classesCount || 0),
-      studentsCount: Number(form.studentsCount || 0),
-      status: form.status,
-    } } : x)));
-    setIsEditOpen(false);
-    setEditing(null);
-    resetForm();
   }
 
   function exportCSV() {
@@ -212,9 +124,45 @@ export default function ManageTeachersPage() {
     URL.revokeObjectURL(url);
   }
 
-  function initials(name) {
-    return name.split(" ").map((s) => s[0]).slice(0, 2).join("").toUpperCase();
-  }
+  // Add this submit handler
+  const submitInvite = async (e) => {
+    e.preventDefault();
+    if (!form.email?.trim() || !form.dept?.trim()) {
+      alert("Please provide email and department.");
+      return;
+    }
+
+    try {
+      const payload = { email: form.email.trim(), department: form.dept.trim() };
+      const data = await handleInviteTeacher(payload);
+
+      // Optionally add returned teacher to local list (if API returns created teacher)
+      if (data && data.email) {
+        setTeachers((prev) => [
+          ...prev,
+          {
+            id: Date.now(), // temporary id; replace with server id if provided
+            name: data.name || payload.email.split("@")[0],
+            email: data.email,
+            dept: data.department || payload.department,
+            subdept: data.subdept || "",
+            experience: data.experience || 0,
+            rating: data.rating || 0,
+            classesCount: data.classesCount || 0,
+            studentsCount: data.studentsCount || 0,
+            status: data.status || "active",
+          },
+        ]);
+      }
+
+      setIsAddOpen(false);
+      resetForm();
+      alert("Invite sent successfully.");
+    } catch (err) {
+      console.error("Invite failed:", err);
+      alert("Failed to send invite. See console for details.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -234,7 +182,7 @@ export default function ManageTeachersPage() {
               </svg>
               Export
             </button>
-            <button onClick={() => setIsAddOpen(true)} className="inline-flex items-center gap-2 bg-[#2C3E86] text-white px-4 py-2 rounded-2xl shadow hover:opacity-95">
+            <button onClick={() => setIsAddOpen(true)} className="inline-flex cursor-pointer items-center gap-2 bg-[#2C3E86] text-white px-4 py-2 rounded-2xl shadow hover:opacity-95">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
               </svg>
@@ -254,20 +202,20 @@ export default function ManageTeachersPage() {
           <div className="p-6 bg-white rounded-xl shadow-sm">
             <div className="text-sm text-gray-500">Average Rating</div>
             <div className="text-3xl font-semibold mt-2">
-              {teachers.length ? (teachers.reduce((s, x) => s + x.rating, 0) / teachers.length).toFixed(1) : "-"}
+              {teachers.length ? (teachers.reduce((s, x) => s + (x.rating || 0), 0) / teachers.length).toFixed(1) : "-"}
             </div>
             <div className="text-xs text-gray-400 mt-1">Out of 5.0</div>
           </div>
 
           <div className="p-6 bg-white rounded-xl shadow-sm">
             <div className="text-sm text-gray-500">Total Classes</div>
-            <div className="text-3xl font-semibold mt-2">{teachers.reduce((s, x) => s + x.classesCount, 0)}</div>
+            <div className="text-3xl font-semibold mt-2">{teachers.reduce((s, x) => s + (x.classesCount || 0), 0)}</div>
             <div className="text-xs text-gray-400 mt-1">This semester</div>
           </div>
 
           <div className="p-6 bg-white rounded-xl shadow-sm">
             <div className="text-sm text-gray-500">Total Students</div>
-            <div className="text-3xl font-semibold mt-2">{teachers.reduce((s, x) => s + x.studentsCount, 0)}</div>
+            <div className="text-3xl font-semibold mt-2">{teachers.reduce((s, x) => s + (x.studentsCount || 0), 0)}</div>
             <div className="text-xs text-gray-400 mt-1">Across all teachers</div>
           </div>
         </div>
@@ -284,7 +232,7 @@ export default function ManageTeachersPage() {
 
             <div>
               <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="border rounded-xl px-4 py-2">
-                {departments.map((d) => (
+                {deptOptions.map((d) => (
                   <option key={d} value={d}>{d}</option>
                 ))}
               </select>
@@ -314,13 +262,15 @@ export default function ManageTeachersPage() {
             </thead>
             <tbody>
               {filtered.map((t) => (
+                console.log(t) ||
                 <tr key={t.id} className="border-b last:border-0">
                   <td className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-semibold text-gray-700">{initials(t.name)}</div>
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-semibold text-gray-700">
+                        {t.userId.firstName.charAt(0).toUpperCase()+t.userId.lastName.charAt(0).toUpperCase()}</div>
                       <div>
-                        <div className="font-semibold text-gray-800">{t.name}</div>
-                        <div className="text-sm text-gray-400">{t.email}</div>
+                        <div className="font-semibold text-gray-800">{t.userId.firstName+" "+t.userId.lastName}</div>
+                        <div className="text-sm text-gray-400">{t.userId.email}</div>
                       </div>
                     </div>
                   </td>
@@ -337,7 +287,7 @@ export default function ManageTeachersPage() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M9.049 2.927C9.349 2.055 10.651 2.055 10.951 2.927l.948 2.794a1 1 0 00.95.69h2.94c.969 0 1.371 1.24.588 1.81l-2.378 1.73a1 1 0 00-.364 1.118l.907 2.94c.3.972-.755 1.77-1.54 1.18L10 14.347l-2.592 1.84c-.785.59-1.84-.208-1.54-1.18l.907-2.94a1 1 0 00-.364-1.118L4.04 8.22c-.783-.57-.381-1.81.588-1.81h2.94a1 1 0 00.95-.69l.948-2.794z" />
                       </svg>
-                      <span className="font-medium">{t.rating.toFixed(1)}</span>
+                      <span className="font-medium">{(t.rating ?? 0).toFixed(1)}</span>
                     </div>
                   </td>
 
@@ -353,26 +303,17 @@ export default function ManageTeachersPage() {
                   <td>
                     <div className="flex items-center gap-3">
                       <button onClick={() => { setViewing(t); setIsViewOpen(true); }} className="p-2 rounded-full hover:bg-gray-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z" />
                         </svg>
                       </button>
 
-                      <button onClick={() => openEdit(t)} className="p-2 rounded-full hover:bg-gray-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M11 5h6M4 7v12a2 2 0 002 2h12" />
-                          <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
-                      </button>
-
-                      <button onClick={() => setConfirmDelete(t)} className="p-2 rounded-full hover:bg-gray-100 text-red-500">
+                      <button onClick={() => setConfirmDelete(t)} className="p-2 rounded-full hover:bg-gray-100 text-red-500 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22" />
                         </svg>
                       </button>
-
-                      <button onClick={() => handleToggleStatus(t.id)} className="px-2 py-1 rounded-lg border text-sm">Toggle</button>
                     </div>
                   </td>
                 </tr>
@@ -393,18 +334,13 @@ export default function ManageTeachersPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setIsAddOpen(false)} />
 
-          <form onSubmit={handleAdd} className="relative bg-white max-w-2xl w-full rounded-2xl p-6 z-10 shadow-lg">
+          <form onSubmit={submitInvite} className="relative bg-white max-w-xl w-full rounded-2xl p-6 z-10 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold">Add Teacher</h3>
               <button type="button" onClick={() => setIsAddOpen(false)} className="text-gray-500 hover:text-gray-700">Close</button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Full Name</span>
-                <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
               <label className="flex flex-col">
                 <span className="text-sm text-gray-600">Email</span>
                 <input value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="border p-2 rounded" />
@@ -412,41 +348,13 @@ export default function ManageTeachersPage() {
 
               <label className="flex flex-col">
                 <span className="text-sm text-gray-600">Department</span>
-                <input value={form.dept} onChange={(e) => setForm((f) => ({ ...f, dept: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Sub-department</span>
-                <input value={form.subdept} onChange={(e) => setForm((f) => ({ ...f, subdept: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Experience (years)</span>
-                <input type="number" value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Rating</span>
-                <input type="number" step="0.1" value={form.rating} onChange={(e) => setForm((f) => ({ ...f, rating: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              {/* <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Classes Count</span>
-                <input type="number" value={form.classesCount} onChange={(e) => setForm((f) => ({ ...f, classesCount: e.target.value }))} className="border p-2 rounded" />
-              </label> */}
-
-              {/* <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Students Count</span>
-                <input type="number" value={form.studentsCount} onChange={(e) => setForm((f) => ({ ...f, studentsCount: e.target.value }))} className="border p-2 rounded" />
-              </label> */}
-
-              {/* <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Status</span>
-                <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} className="border p-2 rounded">
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
+                <select value={form.dept} onChange={(e) => setForm((f) => ({ ...f, dept: e.target.value }))} className="border p-2 rounded">
+                  <option value="">Select department</option>
+                  {DEPARTMENTS.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
                 </select>
-              </label> */}
+              </label>
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-3">
@@ -463,12 +371,15 @@ export default function ManageTeachersPage() {
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setIsViewOpen(false)} />
           <div className="relative bg-white max-w-md w-full rounded-2xl p-6 z-10 shadow-lg">
             <div className="flex items-start justify-between">
-              <div>
-                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center font-semibold text-gray-700 text-lg">{initials(viewing.name)}</div>
-                <h3 className="text-xl font-semibold mt-3">{viewing.name}</h3>
-                <div className="text-sm text-gray-500">{viewing.email}</div>
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center font-semibold text-gray-700 text-lg">
+                  {viewing.userId.firstName.charAt(0).toUpperCase()+viewing.userId.lastName.charAt(0).toUpperCase()}</div>
+                <div>
+                <h3 className="text-xl font-semibold mt-3">{viewing.userId.firstName + " " + viewing.userId.lastName}</h3>
+                <div className="text-sm text-gray-500">{viewing.userId.email}</div>
+                </div>
               </div>
-              <button onClick={() => setIsViewOpen(false)} className="text-gray-500">Close</button>
+              <button onClick={() => setIsViewOpen(false)} className="text-gray-500 cursor-pointer">Close</button>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-700">
@@ -477,19 +388,13 @@ export default function ManageTeachersPage() {
                 <div className="font-medium">{viewing.dept}</div>
               </div>
               <div>
-                <div className="text-xs text-gray-400">Subdept</div>
-                <div className="font-medium">{viewing.subdept}</div>
-              </div>
-
-              <div>
                 <div className="text-xs text-gray-400">Experience</div>
                 <div className="font-medium">{viewing.experience} years</div>
               </div>
               <div>
                 <div className="text-xs text-gray-400">Rating</div>
-                <div className="font-medium">{viewing.rating.toFixed(1)}</div>
+                <div className="font-medium">{(viewing.rating ?? 0).toFixed(1)}</div>
               </div>
-
               <div>
                 <div className="text-xs text-gray-400">Classes</div>
                 <div className="font-medium">{viewing.classesCount}</div>
@@ -498,82 +403,12 @@ export default function ManageTeachersPage() {
                 <div className="text-xs text-gray-400">Students</div>
                 <div className="font-medium">{viewing.studentsCount}</div>
               </div>
-
-              <div className="col-span-2">
+              <div>
                 <div className="text-xs text-gray-400">Status</div>
                 <div className="font-medium">{viewing.status}</div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {isEditOpen && editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black opacity-40" onClick={() => setIsEditOpen(false)} />
-
-          <form onSubmit={handleEdit} className="relative bg-white max-w-2xl w-full rounded-2xl p-6 z-10 shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold">Edit Teacher</h3>
-              <button type="button" onClick={() => setIsEditOpen(false)} className="text-gray-500 hover:text-gray-700">Close</button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Full Name</span>
-                <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Email</span>
-                <input value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Department</span>
-                <input value={form.dept} onChange={(e) => setForm((f) => ({ ...f, dept: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Sub-department</span>
-                <input value={form.subdept} onChange={(e) => setForm((f) => ({ ...f, subdept: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Experience (years)</span>
-                <input type="number" value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Rating</span>
-                <input type="number" step="0.1" value={form.rating} onChange={(e) => setForm((f) => ({ ...f, rating: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Classes Count</span>
-                <input type="number" value={form.classesCount} onChange={(e) => setForm((f) => ({ ...f, classesCount: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Students Count</span>
-                <input type="number" value={form.studentsCount} onChange={(e) => setForm((f) => ({ ...f, studentsCount: e.target.value }))} className="border p-2 rounded" />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">Status</span>
-                <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} className="border p-2 rounded">
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <button type="button" onClick={() => { setIsEditOpen(false); setEditing(null); resetForm(); }} className="px-4 py-2 rounded-lg border">Cancel</button>
-              <button type="submit" className="px-4 cursor-pointer py-2 rounded-lg" style={{ background: PRIMARY, color: "white" }}>Save</button>
-            </div>
-          </form>
         </div>
       )}
 

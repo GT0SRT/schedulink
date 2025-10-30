@@ -24,6 +24,7 @@ import MyClasses from './pages/MyClasses';
 import Test from './pages/Test';
 import QRScanner from './components/QRScanner';
 import TrackAttendance from './pages/TrackAttendance';
+import ManageDepartments from './pages/ManageDepartments';
 
 function App() {
   const fetchUser = useUserStore((state) => state.fetchUser);
@@ -52,6 +53,7 @@ function App() {
 
           <Route path="overview" element={<Overview />} />
           <Route path="schedules" element={<ManageSchedules />} />
+          <Route path="departments" element={<ManageDepartments />} />
           <Route path="teachers" element={<ManageTeachersPage />} />
 
 

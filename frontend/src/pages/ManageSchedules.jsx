@@ -38,6 +38,30 @@ const ManageSchedules = () => {
     day: baseDays[0],
     time: times[0],
   });
+  const [teachers, setTeachers] = useState([]);
+
+const fetchTeachers = async () => {
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/teacher/my-teachers`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+
+    setTeachers(res.data.teachers || []);
+  } catch (err) {
+    console.error("Error fetching teachers:", err.response?.data || err.message);
+  }
+};
+
+useEffect(() => {
+  fetchTeachers();
+}, []);
 
   const [timetable, setTimetable] = useState([]);
   const fetchTimeTable = async () => {
@@ -54,7 +78,6 @@ const ManageSchedules = () => {
         }
       );
       if (res.status !== 200) throw new Error("Failed to fetch timetable");
-
       setTimetable([...res.data.timetable]);
     } catch (err) {
       console.error("Error fetching timetable:", err);
@@ -197,7 +220,7 @@ const handleAddClass = async () => {
       </select>
 
       <button
-        className="px-4 py-2 bg-[#2c3e86] text-white rounded hover:bg-[#1f2b5f]"
+        className="px-4 py-2 bg-[#2c3e86] cursor-pointer text-white rounded hover:bg-[#1f2b5f]"
         onClick={() => setShowModal(true)}
       >
         Add Class
@@ -250,17 +273,22 @@ const handleAddClass = async () => {
               <input
                 type="text"
                 placeholder="Subject"
-                className="border border-gray-300 rounded px-3 py-2 outline-none"
+                className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
                 value={newClass.subject}
                 onChange={(e) => setNewClass({ ...newClass, subject: e.target.value })}
               />
-              <input
-                type="text"
-                placeholder="Teacher"
-                className="border border-gray-300 rounded px-3 py-2 outline-none"
+              <select
+                className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
                 value={newClass.teacher}
                 onChange={(e) => setNewClass({ ...newClass, teacher: e.target.value })}
-              />
+              >
+                <option value="">Select Teacher</option>
+                {teachers.map((t) => (
+                  <option key={t._id} value={`${t.userId.firstName} ${t.userId.lastName}`}>
+                    {t.userId.firstName} {t.userId.lastName}
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
                 placeholder="Room"
@@ -269,7 +297,7 @@ const handleAddClass = async () => {
                 onChange={(e) => setNewClass({ ...newClass, room: e.target.value })}
               />
               <select
-                className="border border-gray-300 rounded px-3 py-2 outline-none"
+                className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
                 value={newClass.day}
                 onChange={(e) => setNewClass({ ...newClass, day: e.target.value })}
               >
@@ -278,7 +306,7 @@ const handleAddClass = async () => {
                 ))}
               </select>
               <select
-                className="border border-gray-300 rounded px-3 py-2 outline-none"
+                className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
                 value={newClass.time}
                 onChange={(e) => setNewClass({ ...newClass, time: e.target.value })}
               >
@@ -288,8 +316,8 @@ const handleAddClass = async () => {
               </select>
 
               <div className="flex justify-end gap-2 mt-3">
-                <button className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onClick={() => setShowModal(false)}>Cancel</button>
-                <button className="px-4 py-2 bg-[#2c3e86] text-white rounded hover:bg-[#1f2b5f]" onClick={handleAddClass}>Add</button>
+                <button className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 cursor-pointer" onClick={() => setShowModal(false)}>Cancel</button>
+                <button className="px-4 py-2 bg-[#2c3e86] text-white rounded hover:bg-[#1f2b5f] cursor-pointer" onClick={handleAddClass}>Add</button>
               </div>
             </div>
           </div>
