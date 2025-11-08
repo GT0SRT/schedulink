@@ -3,7 +3,7 @@ const TimeTable = require("../models/TimeTable");
 // Create and add period to a day
 exports.createPeriod = async (req, res) => {
   const { className, day } = req.params;
-  const { subject, teacher, room, time, color } = req.body;
+  const { course, teacher, room, time, color } = req.body;
 
   let timetable = await TimeTable.findOne({ department: className, day });
 
@@ -11,10 +11,10 @@ exports.createPeriod = async (req, res) => {
     timetable = new TimeTable({
       department: className,
       day,
-      periods: [{ subject, teacher, room, time, color }],
+      periods: [{ course, teacher, room, time, color }],
     });
   } else {
-    timetable.periods.push({ subject, teacher, room, time, color });
+    timetable.periods.push({ course, teacher, room, time, color });
   }
 
   await timetable.save();

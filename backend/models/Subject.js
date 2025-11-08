@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const SubjectSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     code: { type: String, required: true, unique: true },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
   },

@@ -120,6 +120,7 @@ app.use('/api/generateQR', qrRoutes);
 app.use("/api/timetable", timetableRoutes);
 app.use("/api/teacher", require("./routes/teacher.route"));
 app.use("/api/department", require("./routes/department.route"));
+app.use("/api/courses", require("./routes/course.route"));
 
 // Server
 const port = process.env.PORT || 4000;

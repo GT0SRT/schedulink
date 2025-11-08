@@ -5,6 +5,8 @@ import { BsCalendar2DateFill, BsFillPersonCheckFill } from "react-icons/bs";
 import { SiGoogletasks } from "react-icons/si";
 import { MdOutlineAutoGraph } from "react-icons/md";
 import axios from "axios";
+import useUserStore from "../store/userStore";
+import useDepartmentStore from "../store/departmentStore";
 
 const baseDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const times = [
@@ -19,8 +21,6 @@ const times = [
   "05:00 PM",
 ];
 
-const departments = ["Computer Science", "Electronics", "Civil"];
-
 const generateColor = () => {
   const colors = [ "#3B82F6", "#8B5CF6", "#22C55E", "#F59E0B", "#F87171", "#EF4444", 
   "#10B981", "#FBBF24", "#F472B6", "#6366F1", "#F97316", "#06B6D4", "#D946EF", 
@@ -29,16 +29,27 @@ const generateColor = () => {
 };
 
 const ManageSchedules = () => {
-  const [selectedDept, setSelectedDept] = useState(departments[0]);
+  const { user } = useUserStore();
+  const { departments, courses, fetchDepartments, fetchCourses } = useDepartmentStore();
+
+  useEffect(() => {
+    if (user) fetchDepartments();
+  }, [user, fetchDepartments]);
+
+  const [selectedDept, setSelectedDept] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [newClass, setNewClass] = useState({
-    subject: "",
+    course: "",
     teacher: "",
     room: "",
     day: baseDays[0],
     time: times[0],
   });
   const [teachers, setTeachers] = useState([]);
+
+  useEffect(() => {
+    if (selectedDept) fetchCourses(selectedDept);
+  }, [selectedDept, fetchCourses]);
 
 const fetchTeachers = async () => {
   try {
@@ -101,7 +112,7 @@ const addClassToBackend = async (department, classData) => {
     const res = await axios.post(
       url,{
         time: classData.time,
-        subject: classData.subject,
+        course: classData.course,
         room: classData.room,
         teacher: classData.teacher,
         color: classData.color,
@@ -128,6 +139,7 @@ const addClassToBackend = async (department, classData) => {
 };
 
 // Main function that uses it
+const [Schedules, setSchedules] = useState([]);
 const handleAddClass = async () => {
   const classData = { ...newClass, color: generateColor() };
   try {
@@ -139,7 +151,7 @@ const handleAddClass = async () => {
 
     setShowModal(false);
     setNewClass({
-      subject: "",
+      course: "",
       teacher: "",
       room: "",
       day: baseDays[0],
@@ -158,7 +170,7 @@ const handleAddClass = async () => {
       <div className="flex flex-row justify-between mb-6 items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Manage Schedules</h1>
-          <p className="text-sm text-gray-500">Department: {selectedDept}</p>
+          {/* <p className="text-sm text-gray-500">Department: {selectedDept}</p> */}
         </div>
 
         <div className="flex gap-2 items-center">
@@ -205,7 +217,7 @@ const handleAddClass = async () => {
   <div className="flex flex-row justify-between mb-6 items-center">
     <div>
       <h1 className="text-xl font-bold text-gray-800">Class Schedule</h1>
-      <p className="text-sm text-gray-500">Department: {selectedDept}</p>
+      {/* <p className="text-sm text-gray-500">Department: {selectedDept}</p> */}
     </div>
 
     <div className="flex gap-2 items-center">
@@ -214,11 +226,11 @@ const handleAddClass = async () => {
         value={selectedDept}
         onChange={(e) => setSelectedDept(e.target.value)}
       >
+        <option value="">Select Department</option>
         {departments.map((dept) => (
-          <option key={dept} value={dept}>{dept}</option>
+          <option key={dept._id} value={dept._id}>{dept.name}</option>
         ))}
       </select>
-
       <button
         className="px-4 py-2 bg-[#2c3e86] cursor-pointer text-white rounded hover:bg-[#1f2b5f]"
         onClick={() => setShowModal(true)}
@@ -268,15 +280,27 @@ const handleAddClass = async () => {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-[350px]">
-            <h2 className="text-lg font-bold mb-4">Add Class - {selectedDept}</h2>
+            <h2 className="text-lg font-bold mb-4">Add Class </h2>
             <div className="flex flex-col gap-3">
-              <input
+              {/* <input
                 type="text"
                 placeholder="Subject"
                 className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
                 value={newClass.subject}
                 onChange={(e) => setNewClass({ ...newClass, subject: e.target.value })}
-              />
+              /> */}
+              <select
+                className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
+                value={newClass.course}
+                onChange={(e) => setNewClass({ ...newClass, course: e.target.value })}
+              >
+                <option value="">Select Course</option>
+                {courses.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
               <select
                 className="border border-gray-300 rounded px-3 py-2 outline-none cursor-pointer"
                 value={newClass.teacher}
